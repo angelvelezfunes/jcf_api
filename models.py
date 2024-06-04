@@ -12,7 +12,7 @@ class User(Base):
     email = Column(String(255), unique=True, index=True)
     hashed_password = Column(String(255))
     is_active = Column(Boolean, default=True)
-
+    is_admin = Column(Boolean, default=False)
     items = relationship("Item", back_populates="owner")
 
 
@@ -30,6 +30,7 @@ class Client(Base):
     email = Column(String(255), unique=True, index=True)
     special_instructions = Column(String(255), index=True)
     is_active = Column(Boolean, default=True)
+
 
 
 class Item(Base):

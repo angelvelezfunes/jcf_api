@@ -32,6 +32,7 @@ class UserCreate(UserBase):
     name: str
     email: str
     username: str
+    is_admin: bool
 
 
 class User(UserBase):
@@ -55,6 +56,24 @@ class ClientCreate(UserBase):
     city: str
     state: str
     is_active: bool
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    username: str
+    email: str
+    is_admin: bool
+
+    class Config:
+        orm_mode = True
+
+
+class TokenData(BaseModel):
+    username: str = None
+
+    class Config:
+        orm_mode = True
 
 
 class Client(UserBase):

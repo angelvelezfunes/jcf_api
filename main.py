@@ -1,6 +1,7 @@
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
@@ -17,13 +18,29 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 # Load environment variables from .env file
 load_dotenv()
 
 # Get environment variables
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+ACCESS_TOKEN_EXPIRE = int(os.getenv("ACCESS_TOKEN_EXPIRE"))
 
 Base.metadata.create_all(bind=engine)
 
@@ -61,21 +78,6 @@ def authenticate_user(db, username: str, password: str):
     return user
 
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-    class Config:
-        from_attributes = True
-
-
-class TokenData(BaseModel):
-    username: str = None
-
-    class Config:
-        from_attributes = True
-
-
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     if expires_delta:
@@ -87,7 +89,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return encoded_jwt
 
 
-@app.post("/token", response_model=Token)
+@app.post("/token", response_model=schemas.Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
@@ -96,11 +98,17 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(days=ACCESS_TOKEN_EXPIRE)
     access_token = create_access_token(
-        data={"sub": user.name}, expires_delta=access_token_expires
+        data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "username": user.username,
+        "email": user.email,
+        "is_admin": user.is_admin,
+    }
 
 
 @app.get("/")
