@@ -28,16 +28,21 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str
-    name: str
-    email: str
     username: str
+    password: str
+    first_name: str
+    last_name: str
+    email: str
     is_admin: bool
 
 
 class User(UserBase):
     id: int
     is_active: bool
+    username: str
+    first_name: str
+    last_name: str
+    email: str
     items: list[Item] = []
 
     class Config:
