@@ -1,5 +1,5 @@
 # schemas.py
-from typing import Union
+from typing import Union, Optional
 from pydantic import BaseModel
 
 
@@ -34,6 +34,16 @@ class UserCreate(UserBase):
     last_name: str
     email: str
     is_admin: bool
+
+
+class UserUpdate(UserBase):
+    username: str
+    password: Optional[str] = None
+    first_name: str
+    last_name: str
+    email: str
+    is_admin: Optional[bool] = None
+    is_active: Optional[bool]
 
 
 class User(UserBase):

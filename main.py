@@ -137,6 +137,19 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 
+@app.put("/users/{id}", response_model=schemas.User)
+def update_user(id: int, user: schemas.UserUpdate, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id=id)
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    db_user_with_same_username = crud.get_user_by_username(db, username=user.username)
+    if db_user_with_same_username and db_user_with_same_username.id != id:
+        raise HTTPException(status_code=400, detail="Username already registered")
+
+    return crud.update_user(db=db, db_user=db_user, user=user)
+
+
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)

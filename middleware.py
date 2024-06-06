@@ -17,23 +17,30 @@ class AuthMiddleware(BaseHTTPMiddleware):
         self.secret_key = secret_key
         self.algorithm = algorithm
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next) -> Response:
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
         # Skip authentication for /token endpoint
         if request.url.path in ["/token", "/docs", "/", "/openapi.json"]:
             return await call_next(request)
 
-        # Validate token for other endpoints
-        if "Authorization" not in request.headers:
-            raise HTTPException(status_code=401, detail="Missing Authorization header")
-        token = request.headers["Authorization"].split()[-1]
         try:
+            auth_header = request.headers.get("Authorization")
+            print('Authorization:', auth_header)
+            if not auth_header:
+                raise HTTPException(status_code=401, detail="Missing Authorization header")
+
+            token = auth_header.split()[-1]
+            if not token:
+                raise HTTPException(status_code=401, detail="Missing token")
             payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
-            username: str = payload.get("sub")
-            if username is None:
+            username = payload.get("sub")
+            if not username:
                 raise HTTPException(status_code=401, detail="Invalid token")
-            request.state.user = get_user(self.db, username)
         except JWTError:
             raise HTTPException(status_code=401, detail="Invalid token")
+
         return await call_next(request)
 
 

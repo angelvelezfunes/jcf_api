@@ -51,6 +51,31 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
+def update_user(db: Session, db_user: models.User, user: schemas.UserUpdate):
+    if user.password:
+        hashed_password = get_password_hash(user.password)
+        db_user.hashed_password = hashed_password
+
+    if user.username:
+        db_user.username = user.username
+
+    if user.email:
+        db_user.email = user.email
+
+    if user.first_name:
+        db_user.first_name = user.first_name
+
+    if user.last_name:
+        db_user.last_name = user.last_name
+
+    if user.is_active is not None:
+        db_user.is_active = user.is_active
+
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
 # CLIENTS #
 
 def create_client(db: Session, client: schemas.ClientCreate):
