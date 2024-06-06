@@ -13,26 +13,25 @@ from models import User, Item
 import crud
 import schemas
 from database import SessionLocal, engine, Base
+import middleware
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-
 origins = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "http://localhost",
 ]
-
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
-
 
 # Load environment variables from .env file
 load_dotenv()
@@ -46,6 +45,13 @@ Base.metadata.create_all(bind=engine)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+app.add_middleware(middleware.AuthMiddleware, db=SessionLocal(), secret_key=SECRET_KEY, algorithm=ALGORITHM)
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hi, Users"}
 
 
 # Dependency
@@ -89,6 +95,17 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return encoded_jwt
 
 
+def decode_access_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        return username
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
+
 @app.post("/token", response_model=schemas.Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(db, form_data.username, form_data.password)
@@ -109,11 +126,6 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         "email": user.email,
         "is_admin": user.is_admin,
     }
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hi, Users"}
 
 
 # USERS

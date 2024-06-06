@@ -18,7 +18,7 @@ class Item(ItemBase):
     owner_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # USERS #
@@ -46,7 +46,7 @@ class User(UserBase):
     items: list[Item] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # CLIENTS #
@@ -71,14 +71,14 @@ class Token(BaseModel):
     is_admin: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class TokenData(BaseModel):
     username: str = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class Client(UserBase):
@@ -86,4 +86,4 @@ class Client(UserBase):
     is_active: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
