@@ -1,6 +1,7 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Index
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Index, DateTime
 from sqlalchemy.orm import relationship
 from database import Base
+from datetime import datetime
 
 
 class User(Base):
@@ -33,7 +34,6 @@ class Client(Base):
     is_active = Column(Boolean, default=True)
 
 
-
 class Item(Base):
     __tablename__ = "items"
 
@@ -43,3 +43,12 @@ class Item(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="items")
+
+
+class Schedule(Base):
+    __tablename__ = "schedule"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(250), index=True)
+    start = Column(DateTime, index=True, default=datetime.utcnow)
+    end = Column(DateTime, index=True, default=datetime.utcnow)

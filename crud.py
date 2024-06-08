@@ -36,6 +36,10 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
+def get_schedule(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Schedule).offset(skip).limit(limit).all()
+
+
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = get_password_hash(user.password)
     db_user = models.User(username=user.username,
@@ -111,3 +115,15 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
     db.commit()
     db.refresh(db_item)
     return db_item
+
+
+def create_schedule(db: Session, schedule: schemas.ScheduleCreate):
+    db_schedule = models.Schedule(
+        title=schedule.title,
+        start=schedule.start,
+        end=schedule.end
+    )
+    db.add(db_schedule)
+    db.commit()
+    db.refresh(db_schedule)
+    return db_schedule

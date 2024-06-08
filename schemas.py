@@ -1,6 +1,7 @@
 # schemas.py
 from typing import Union, Optional
 from pydantic import BaseModel
+from datetime import datetime
 
 
 # ITEMS #
@@ -97,3 +98,20 @@ class Client(UserBase):
 
     class Config:
         from_attributes = True
+
+
+# Schedule
+class ScheduleCreate(BaseModel):
+    title: str
+    start: datetime
+    end: datetime
+
+
+class ScheduleRead(BaseModel):
+    id: int
+    title: str
+    start: datetime
+    end: datetime
+
+    class Config:
+        orm_mode = True

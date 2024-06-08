@@ -186,3 +186,18 @@ def create_client(client: schemas.ClientCreate, db: Session = Depends(get_db)):
 def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     items = crud.get_items(db, skip=skip, limit=limit)
     return items
+
+
+# Schedule
+@app.post("/schedule", response_model=schemas.ScheduleCreate)
+def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
+    db_schedule = crud.create_schedule(db=db, schedule=schedule)
+    if db_schedule:
+        raise HTTPException(status_code=409, detail="Schedule already exists")
+    return db_schedule
+
+
+@app.get("/schedule", response_model=list[schemas.ScheduleRead])
+def read_schedules(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    schedule = crud.get_schedule(db, skip=skip, limit=limit)
+    return schedule
