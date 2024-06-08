@@ -192,8 +192,6 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 @app.post("/schedule", response_model=schemas.ScheduleCreate)
 def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
     db_schedule = crud.create_schedule(db=db, schedule=schedule)
-    if db_schedule:
-        raise HTTPException(status_code=409, detail="Schedule already exists")
     return db_schedule
 
 
@@ -201,3 +199,24 @@ def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_
 def read_schedules(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     schedule = crud.get_schedule(db, skip=skip, limit=limit)
     return schedule
+
+
+# Crew Leader
+@app.post("/crewLeader", response_model=schemas.CrewLeaderRead)
+def create_crew_leader(crew_leader: schemas.CrewLeaderCreate, db: Session = Depends(get_db)):
+    db_crew_leader = crud.create_crew_leader(db=db, crew_leader=crew_leader)
+    return db_crew_leader
+
+
+@app.get("/crewLeaders", response_model=list[schemas.CrewLeaderRead])
+def read_crew_leaders(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    crew_leaders = crud.get_crew_leaders(db, skip=skip, limit=limit)
+    return crew_leaders
+
+
+@app.put("/crewLeader/{crew_leader_id}", response_model=schemas.CrewLeaderRead)
+def update_crew_leader(crew_leader_id: int, crew_leader_update: schemas.CrewLeaderUpdate, db: Session = Depends(get_db)):
+    db_crew_leader = crud.update_crew_leader(db=db, crew_leader_id=crew_leader_id, crew_leader_update=crew_leader_update)
+    if not db_crew_leader:
+        raise HTTPException(status_code=404, detail="Crew Leader not found")
+    return db_crew_leader

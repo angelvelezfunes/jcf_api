@@ -127,3 +127,32 @@ def create_schedule(db: Session, schedule: schemas.ScheduleCreate):
     db.commit()
     db.refresh(db_schedule)
     return db_schedule
+
+
+def create_crew_leader(db: Session, crew_leader: schemas.CrewLeaderCreate):
+    db_crew_leader = models.CrewLeaders(
+        first_name=crew_leader.first_name,
+        last_name=crew_leader.last_name,
+        is_active=crew_leader.is_active
+    )
+    db.add(db_crew_leader)
+    db.commit()
+    db.refresh(db_crew_leader)
+    return db_crew_leader
+
+
+def get_crew_leaders(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.CrewLeaders).offset(skip).limit(limit).all()
+
+
+def update_crew_leader(db: Session, crew_leader_id: int, crew_leader_update: schemas.CrewLeaderUpdate):
+    db_crew_leader = db.query(models.CrewLeaders).filter(models.CrewLeaders.id == crew_leader_id).first()
+    if not db_crew_leader:
+        return None
+    for key, value in crew_leader_update.dict(exclude_unset=True).items():
+        setattr(db_crew_leader, key, value)
+    db.commit()
+    db.refresh(db_crew_leader)
+    return db_crew_leader
+
+

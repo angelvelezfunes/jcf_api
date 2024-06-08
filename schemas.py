@@ -115,3 +115,41 @@ class ScheduleRead(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CrewLeaderCreate(BaseModel):
+    first_name: str
+    last_name: str
+    is_active: bool
+
+
+class CrewLeaderRead(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    is_active: bool
+
+    class Config:
+        orm_mode = True
+
+
+class CrewLeaderUpdate(BaseModel):
+    first_name: Optional[str]
+    last_name: Optional[str]
+    is_active: Optional[bool]
+
+class CrewCreate(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    is_active: bool
+
+
+class CrewRead(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    is_active: bool
+
+    class Config:
+        orm_mode = True

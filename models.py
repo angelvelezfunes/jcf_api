@@ -52,3 +52,26 @@ class Schedule(Base):
     title = Column(String(250), index=True)
     start = Column(DateTime, index=True, default=datetime.utcnow)
     end = Column(DateTime, index=True, default=datetime.utcnow)
+
+
+class CrewLeaders(Base):
+    __tablename__ = "crew_leaders"
+
+    id = Column(Integer, primary_key=True, index=True)
+    first_name = Column(String(255), index=True)
+    last_name = Column(String(255), index=True)
+    is_active = Column(Boolean, default=True)
+    crews = relationship("Crews", back_populates="leader")
+
+
+class Crews(Base):
+    __tablename__ = "crews"
+
+    id = Column(Integer, primary_key=True, index=True)
+    first_name = Column(String(255), index=True)
+    last_name = Column(String(255), index=True)
+    is_active = Column(Boolean, default=True)
+    owner_id = Column(Integer, ForeignKey("crew_leaders.id"))
+
+    leader = relationship("CrewLeaders", back_populates="crews")
+
