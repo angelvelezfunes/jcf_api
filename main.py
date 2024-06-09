@@ -201,6 +201,18 @@ def read_schedules(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)
     return schedule
 
 
+@app.delete("/schedule/{schedule_id}", response_model=schemas.ScheduleRead)
+def delete_schedule(schedule_id: int, db: Session = Depends(get_db)):
+    """
+    Delete a schedule by ID.
+    """
+    schedule = crud.get_schedule_by_id(db, schedule_id)
+    if schedule is None:
+        raise HTTPException(status_code=404, detail="Schedule not found")
+    crud.delete_schedule(db, schedule_id)
+    return schedule
+
+
 # Crew Leader
 @app.post("/crewLeader", response_model=schemas.CrewLeaderRead)
 def create_crew_leader(crew_leader: schemas.CrewLeaderCreate, db: Session = Depends(get_db)):
@@ -215,8 +227,33 @@ def read_crew_leaders(skip: int = 0, limit: int = 10, db: Session = Depends(get_
 
 
 @app.put("/crewLeader/{crew_leader_id}", response_model=schemas.CrewLeaderRead)
-def update_crew_leader(crew_leader_id: int, crew_leader_update: schemas.CrewLeaderUpdate, db: Session = Depends(get_db)):
-    db_crew_leader = crud.update_crew_leader(db=db, crew_leader_id=crew_leader_id, crew_leader_update=crew_leader_update)
+def update_crew_leader(crew_leader_id: int, crew_leader_update: schemas.CrewLeaderUpdate,
+                       db: Session = Depends(get_db)):
+    db_crew_leader = crud.update_crew_leader(db=db, crew_leader_id=crew_leader_id,
+                                             crew_leader_update=crew_leader_update)
     if not db_crew_leader:
         raise HTTPException(status_code=404, detail="Crew Leader not found")
     return db_crew_leader
+
+
+@app.get("/schedules/{crew_leader_id}", response_model=list[schemas.ScheduleRead])
+def read_schedules(crew_leader_id: int, db: Session = Depends(get_db)):
+    return crud.get_schedules_by_crew_leader(db=db, crew_leader_id=crew_leader_id)
+
+
+# Crews
+@app.post("/crews", response_model=schemas.CrewCreate)
+def create_schedule(crews: schemas.CrewCreate, db: Session = Depends(get_db)):
+    db_schedule = crud.create_crew(db=db, crews=crews)
+    return db_schedule
+
+
+@app.get("/crews", response_model=list[schemas.CrewRead])
+def read_crew_leaders(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    crews = crud.get_crews(db, skip=skip, limit=limit)
+    return crews
+
+
+@app.get("/crews/{crew_leader_id}", response_model=list[schemas.CrewRead])
+def read_schedules(crew_leader_id: int, db: Session = Depends(get_db)):
+    return crud.get_crews_by_crew_leader(db=db, crew_leader_id=crew_leader_id)

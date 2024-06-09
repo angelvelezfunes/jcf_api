@@ -105,6 +105,7 @@ class ScheduleCreate(BaseModel):
     title: str
     start: datetime
     end: datetime
+    crew_leader_id: int
 
 
 class ScheduleRead(BaseModel):
@@ -112,6 +113,7 @@ class ScheduleRead(BaseModel):
     title: str
     start: datetime
     end: datetime
+    crew_leader_id: int
 
     class Config:
         orm_mode = True
@@ -138,11 +140,18 @@ class CrewLeaderUpdate(BaseModel):
     last_name: Optional[str]
     is_active: Optional[bool]
 
+
+class CrewLeaderWithSchedules(CrewLeaderRead):
+    schedules: list[ScheduleRead] = []
+
+
 class CrewCreate(BaseModel):
     id: int
     first_name: str
     last_name: str
     is_active: bool
+    owner_id: int
+    start_date: datetime
 
 
 class CrewRead(BaseModel):
@@ -150,6 +159,9 @@ class CrewRead(BaseModel):
     first_name: str
     last_name: str
     is_active: bool
+    owner_id: int
+    owner: CrewLeaderRead
+    start_date: datetime
 
     class Config:
         orm_mode = True

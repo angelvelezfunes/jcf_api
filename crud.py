@@ -1,5 +1,5 @@
 # crud.py
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 import models
 import schemas
 from passlib.context import CryptContext
@@ -26,6 +26,10 @@ def get_user_by_username(db: Session, username: str):
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
+
+
+def get_schedule_by_id(db: Session, id: int):
+    return db.query(models.Schedule).filter(models.Schedule.id == id).first()
 
 
 def get_clients(db: Session, skip: int = 0, limit: int = 100):
@@ -121,7 +125,8 @@ def create_schedule(db: Session, schedule: schemas.ScheduleCreate):
     db_schedule = models.Schedule(
         title=schedule.title,
         start=schedule.start,
-        end=schedule.end
+        end=schedule.end,
+        crew_leader_id=schedule.crew_leader_id,
     )
     db.add(db_schedule)
     db.commit()
@@ -145,6 +150,12 @@ def get_crew_leaders(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.CrewLeaders).offset(skip).limit(limit).all()
 
 
+def get_crews(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.Crews).options(
+        joinedload(models.Crews.owner)
+    ).offset(skip).limit(limit).all()
+
+
 def update_crew_leader(db: Session, crew_leader_id: int, crew_leader_update: schemas.CrewLeaderUpdate):
     db_crew_leader = db.query(models.CrewLeaders).filter(models.CrewLeaders.id == crew_leader_id).first()
     if not db_crew_leader:
@@ -156,3 +167,31 @@ def update_crew_leader(db: Session, crew_leader_id: int, crew_leader_update: sch
     return db_crew_leader
 
 
+def get_schedules_by_crew_leader(db: Session, crew_leader_id: int):
+    return db.query(models.Schedule).filter(models.Schedule.crew_leader_id == crew_leader_id).all()
+
+
+def delete_schedule(db: Session, schedule_id: int):
+    schedule = db.query(models.Schedule).filter(models.Schedule.id == schedule_id).first()
+    if schedule:
+        db.delete(schedule)
+        db.commit()
+        return True
+    return False
+
+
+def create_crew(db: Session, crews: schemas.CrewCreate):
+    db_crew = models.Crews(
+        first_name=crews.first_name,
+        last_name=crews.last_name,
+        is_active=crews.is_active,
+        start_date=crews.start_date
+    )
+    db.add(db_crew)
+    db.commit()
+    db.refresh(db_crew)
+    return db_crew
+
+
+def get_crews_by_crew_leader(db: Session, crew_leader_id: int):
+    return db.query(models.Crews).filter(models.Crews.owner_id == crew_leader_id).all()

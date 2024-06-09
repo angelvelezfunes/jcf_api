@@ -45,15 +45,6 @@ class Item(Base):
     owner = relationship("User", back_populates="items")
 
 
-class Schedule(Base):
-    __tablename__ = "schedule"
-
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(250), index=True)
-    start = Column(DateTime, index=True, default=datetime.utcnow)
-    end = Column(DateTime, index=True, default=datetime.utcnow)
-
-
 class CrewLeaders(Base):
     __tablename__ = "crew_leaders"
 
@@ -61,7 +52,19 @@ class CrewLeaders(Base):
     first_name = Column(String(255), index=True)
     last_name = Column(String(255), index=True)
     is_active = Column(Boolean, default=True)
-    crews = relationship("Crews", back_populates="leader")
+    crews = relationship("Crews", back_populates="owner")
+    schedules = relationship("Schedule", back_populates="crew_leader")
+
+
+class Schedule(Base):
+    __tablename__ = "schedule"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(250), index=True)
+    start = Column(DateTime, index=True, default=datetime.utcnow)
+    end = Column(DateTime, index=True, default=datetime.utcnow)
+    crew_leader_id = Column(Integer, ForeignKey('crew_leaders.id'))  # Foreign key referencing CrewLeader
+    crew_leader = relationship("CrewLeaders", back_populates="schedules")
 
 
 class Crews(Base):
@@ -70,8 +73,7 @@ class Crews(Base):
     id = Column(Integer, primary_key=True, index=True)
     first_name = Column(String(255), index=True)
     last_name = Column(String(255), index=True)
+    start_date = Column(DateTime, index=True, default=datetime.utcnow)
     is_active = Column(Boolean, default=True)
     owner_id = Column(Integer, ForeignKey("crew_leaders.id"))
-
-    leader = relationship("CrewLeaders", back_populates="crews")
-
+    owner = relationship("CrewLeaders", back_populates="crews")
