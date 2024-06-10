@@ -257,3 +257,14 @@ def read_crew_leaders(skip: int = 0, limit: int = 10, db: Session = Depends(get_
 @app.get("/crews/{crew_leader_id}", response_model=list[schemas.CrewRead])
 def read_schedules(crew_leader_id: int, db: Session = Depends(get_db)):
     return crud.get_crews_by_crew_leader(db=db, crew_leader_id=crew_leader_id)
+
+
+@app.get("/scheduleCrews", response_model=list[schemas.CrewLeaderSchedule])
+def get_schedule_by_date(date: str, db: Session = Depends(get_db)):
+    if date is not None:
+        schedule = crud.get_schedule_by_date(db, date)
+    else:
+        # If date is not provided, return the complete schedule
+        schedule = crud.get_schedule(db)
+
+    return schedule

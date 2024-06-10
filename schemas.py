@@ -145,6 +145,16 @@ class CrewLeaderWithSchedules(CrewLeaderRead):
     schedules: list[ScheduleRead] = []
 
 
+class CrewLeaderSchedule(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    crews: Optional[list[ScheduleRead]] = None
+
+    class Config:
+        orm_mode = True
+
+
 class CrewCreate(BaseModel):
     id: int
     first_name: str

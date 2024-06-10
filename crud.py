@@ -3,10 +3,8 @@ from sqlalchemy.orm import Session, joinedload
 import models
 import schemas
 from passlib.context import CryptContext
-from datetime import datetime, timedelta
-from jose import JWTError, jwt
-from dotenv import load_dotenv
-import os
+from sqlalchemy.sql import text
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -195,3 +193,14 @@ def create_crew(db: Session, crews: schemas.CrewCreate):
 
 def get_crews_by_crew_leader(db: Session, crew_leader_id: int):
     return db.query(models.Crews).filter(models.Crews.owner_id == crew_leader_id).all()
+
+
+def get_schedule_by_date(db: Session, date: str):
+    sql_query = """
+           SELECT *
+           FROM inventory.schedule s
+           JOIN inventory.crew_leaders c ON s.crew_leader_id = c.id
+           WHERE DATE(s.start) = :date
+       """
+    schedule = db.execute(text(sql_query), {"date": date}).fetchall()
+    return schedule
