@@ -52,7 +52,7 @@ class CrewLeaders(Base):
     first_name = Column(String(255), index=True)
     last_name = Column(String(255), index=True)
     is_active = Column(Boolean, default=True)
-    crews = relationship("Crews", back_populates="owner")
+    owned_crews = relationship("Crews", back_populates="owner")
     schedules = relationship("Schedule", back_populates="crew_leader")
 
 
@@ -76,4 +76,5 @@ class Crews(Base):
     start_date = Column(DateTime, index=True, default=datetime.utcnow)
     is_active = Column(Boolean, default=True)
     owner_id = Column(Integer, ForeignKey("crew_leaders.id"))
-    owner = relationship("CrewLeaders", back_populates="crews")
+    owner = relationship("CrewLeaders", back_populates="owned_crews")
+

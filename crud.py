@@ -5,7 +5,6 @@ import schemas
 from passlib.context import CryptContext
 from sqlalchemy.sql import text
 
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -201,6 +200,9 @@ def get_schedule_by_date(db: Session, date: str):
            FROM inventory.schedule s
            JOIN inventory.crew_leaders c ON s.crew_leader_id = c.id
            WHERE DATE(s.start) = :date
+           ORDER BY c.id
        """
     schedule = db.execute(text(sql_query), {"date": date}).fetchall()
     return schedule
+
+
