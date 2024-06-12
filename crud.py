@@ -219,8 +219,7 @@ def create_time_off(db: Session, time_off: schemas.TimeOffCreate):
     db_time_off = models.TimeOff(
         name=time_off.name,
         start=time_off.start,
-        end=time_off.end,
-        crew_leader_id=time_off.crew_leader_id
+        end=time_off.end
     )
     db.add(db_time_off)
     db.commit()
