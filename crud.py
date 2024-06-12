@@ -33,8 +33,11 @@ def get_clients(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Client).offset(skip).limit(limit).all()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
+def get_users(db: Session, is_active: bool = None, skip: int = 0, limit: int = 100):
+    query = db.query(models.User)
+    if is_active is not None:
+        query = query.filter(models.User.is_active == is_active)
+    return query.offset(skip).limit(limit).all()
 
 
 def get_schedule(db: Session, skip: int = 0, limit: int = 100):
@@ -181,8 +184,9 @@ def create_crew(db: Session, crews: schemas.CrewCreate):
     db_crew = models.Crews(
         first_name=crews.first_name,
         last_name=crews.last_name,
+        start_date=crews.start_date,
         is_active=crews.is_active,
-        start_date=crews.start_date
+        owner_id=crews.owner_id
     )
     db.add(db_crew)
     db.commit()
@@ -204,5 +208,3 @@ def get_schedule_by_date(db: Session, date: str):
        """
     schedule = db.execute(text(sql_query), {"date": date}).fetchall()
     return schedule
-
-

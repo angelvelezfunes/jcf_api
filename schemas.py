@@ -172,9 +172,8 @@ class CrewLeaderSchedule(BaseModel):
 
 
 class CrewCreate(BaseModel):
-    id: int
     first_name: str
     last_name: str
+    start_date: datetime
     is_active: bool
     owner_id: int
-    start_date: datetime
