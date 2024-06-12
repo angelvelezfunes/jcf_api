@@ -165,6 +165,7 @@ class CrewLeaderSchedule(BaseModel):
     title: str
     start: datetime
     end: datetime
+
     # owner: Optional[list[CrewLeaderRead]] = None
 
     class Config:
@@ -177,3 +178,20 @@ class CrewCreate(BaseModel):
     start_date: datetime
     is_active: bool
     owner_id: int
+
+
+# Time Off
+class TimeOffCreate(BaseModel):
+    name: str
+    start: datetime
+    end: datetime
+
+
+class TimeOffRead(BaseModel):
+    id: int
+    name: str
+    start: datetime
+    end: datetime
+
+    class Config:
+        orm_mode = True

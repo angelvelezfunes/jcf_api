@@ -83,6 +83,8 @@ def authenticate_user(db, username: str, password: str):
         return False
     if not verify_password(password, user.hashed_password):
         return False
+    if not user.is_active:
+        return False
     return user
 
 
@@ -114,7 +116,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect username, password or inactive account",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(days=ACCESS_TOKEN_EXPIRE)
@@ -270,3 +272,25 @@ def get_schedule_by_date(date: str, db: Session = Depends(get_db)):
         schedule = crud.get_schedule(db)
 
     return schedule
+
+
+# Time Off
+@app.post("/time-off", response_model=schemas.TimeOffRead)
+def create_time_off_endpoint(time_off: schemas.TimeOffCreate, db: Session = Depends(get_db)):
+    db_time_off = crud.create_time_off(db=db, time_off=time_off)
+    return db_time_off
+
+
+@app.get("/time-off", response_model=list[schemas.TimeOffRead])
+def read_time_off(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    time_off = crud.get_time_off(db, skip=skip, limit=limit)
+    return time_off
+
+
+@app.delete("/time-off/{time_off_id}", response_model=schemas.TimeOffRead)
+def delete_time_off_endpoint(time_off_id: int, db: Session = Depends(get_db)):
+    time_off = crud.get_time_off_by_id(db, time_off_id)
+    if time_off is None:
+        raise HTTPException(status_code=404, detail="Time off not found")
+    crud.delete_time_off(db, time_off_id)
+    return time_off

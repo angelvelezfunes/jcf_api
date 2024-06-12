@@ -78,3 +78,11 @@ class Crews(Base):
     owner_id = Column(Integer, ForeignKey("crew_leaders.id"))
     owner = relationship("CrewLeaders", back_populates="owned_crews")
 
+
+class TimeOff(Base):
+    __tablename__ = "time_off"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(250), index=True)
+    start = Column(DateTime, index=True, default=datetime.utcnow)
+    end = Column(DateTime, index=True, default=datetime.utcnow)

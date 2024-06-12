@@ -213,3 +213,33 @@ def get_schedule_by_date(db: Session, date: str):
        """
     schedule = db.execute(text(sql_query), {"date": date}).fetchall()
     return schedule
+
+
+def create_time_off(db: Session, time_off: schemas.TimeOffCreate):
+    db_time_off = models.TimeOff(
+        name=time_off.name,
+        start=time_off.start,
+        end=time_off.end,
+        crew_leader_id=time_off.crew_leader_id
+    )
+    db.add(db_time_off)
+    db.commit()
+    db.refresh(db_time_off)
+    return db_time_off
+
+
+def delete_time_off(db: Session, time_off_id: int):
+    time_off = db.query(models.TimeOff).filter(models.TimeOff.id == time_off_id).first()
+    if time_off:
+        db.delete(time_off)
+        db.commit()
+        return True
+    return False
+
+
+def get_time_off_by_id(db: Session, id: int):
+    return db.query(models.TimeOff).filter(models.TimeOff.id == id).first()
+
+
+def get_time_off(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.TimeOff).offset(skip).limit(limit).all()
