@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -151,8 +153,8 @@ def update_user(id: int, user: schemas.UserUpdate, db: Session = Depends(get_db)
 
 
 @app.get("/users/", response_model=list[schemas.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
+def read_users(skip: int = 0, limit: int = 100, is_active: Optional[bool] = None, db: Session = Depends(get_db)):
+    users = crud.get_users(db, skip=skip, limit=limit, is_active=is_active)
     return users
 
 
@@ -221,8 +223,8 @@ def create_crew_leader(crew_leader: schemas.CrewLeaderCreate, db: Session = Depe
 
 
 @app.get("/crewLeaders", response_model=list[schemas.CrewLeaderRead])
-def read_crew_leaders(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    crew_leaders = crud.get_crew_leaders(db, skip=skip, limit=limit)
+def read_crew_leaders(skip: int = 0, limit: int = 10, is_active: Optional[bool] = None, db: Session = Depends(get_db)):
+    crew_leaders = crud.get_crew_leaders(db, skip=skip, limit=limit, is_active=is_active)
     return crew_leaders
 
 

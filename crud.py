@@ -1,4 +1,6 @@
 # crud.py
+from typing import Optional
+
 from sqlalchemy.orm import Session, joinedload
 import models
 import schemas
@@ -33,10 +35,17 @@ def get_clients(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Client).offset(skip).limit(limit).all()
 
 
-def get_users(db: Session, is_active: bool = None, skip: int = 0, limit: int = 100):
+def get_users(db: Session, skip: int = 0, limit: int = 100, is_active: Optional[bool] = None):
     query = db.query(models.User)
     if is_active is not None:
         query = query.filter(models.User.is_active == is_active)
+    return query.offset(skip).limit(limit).all()
+
+
+def get_crew_leaders(db: Session, skip: int = 0, limit: int = 10, is_active: Optional[bool] = None):
+    query = db.query(models.CrewLeaders)
+    if is_active is not None:
+        query = query.filter(models.CrewLeaders.is_active == is_active)
     return query.offset(skip).limit(limit).all()
 
 
@@ -144,10 +153,6 @@ def create_crew_leader(db: Session, crew_leader: schemas.CrewLeaderCreate):
     db.commit()
     db.refresh(db_crew_leader)
     return db_crew_leader
-
-
-def get_crew_leaders(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(models.CrewLeaders).offset(skip).limit(limit).all()
 
 
 def get_crews(db: Session, skip: int = 0, limit: int = 10):
