@@ -190,6 +190,16 @@ class TimeOffCreate(BaseModel):
 class TimeOffRead(BaseModel):
     id: int
     name: str
+    start: datetime
+    end: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class TimeOffReadFormatted(BaseModel):
+    id: int
+    name: str
     start: str
     end: str
 

@@ -296,7 +296,7 @@ def delete_time_off_endpoint(time_off_id: int, db: Session = Depends(get_db)):
     return time_off
 
 
-@app.get("/time-off-Crews", response_model=list[schemas.TimeOffRead])
+@app.get("/time-off-Crews", response_model=list[schemas.TimeOffReadFormatted])
 def time_off_by_date(date_start: str, date_end: str, db: Session = Depends(get_db)):
     schedule = crud.get_time_off_by_date(db, date_start, date_end)
 
