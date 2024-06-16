@@ -190,8 +190,8 @@ class TimeOffCreate(BaseModel):
 class TimeOffRead(BaseModel):
     id: int
     name: str
-    start: datetime
-    end: datetime
+    start: str
+    end: str
 
     class Config:
         orm_mode = True

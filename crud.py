@@ -246,7 +246,8 @@ def get_time_off(db: Session, skip: int = 0, limit: int = 100):
 
 def get_time_off_by_date(db: Session, date_start: str, date_end: str):
     sql_query = """
-           SELECT *
+            SELECT id, name, DATE_FORMAT(start, '%m/%d/%Y %k:%i:%s') AS start, 
+                       DATE_FORMAT(end, '%m/%d/%Y %k:%i:%s') AS end
            FROM inventory.time_off s
            WHERE s.start BETWEEN :start AND :end 
        """
