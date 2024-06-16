@@ -242,3 +242,13 @@ def get_time_off_by_id(db: Session, id: int):
 
 def get_time_off(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.TimeOff).offset(skip).limit(limit).all()
+
+
+def get_time_off_by_date(db: Session, date_start: str, date_end: str):
+    sql_query = """
+           SELECT *
+           FROM inventory.time_off s
+           WHERE s.start BETWEEN :start AND :end 
+       """
+    schedule = db.execute(text(sql_query), {"start": date_start, "end": date_end}).fetchall()
+    return schedule
