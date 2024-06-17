@@ -253,3 +253,17 @@ def get_time_off_by_date(db: Session, date_start: str, date_end: str):
        """
     schedule = db.execute(text(sql_query), {"start": date_start, "end": date_end}).fetchall()
     return schedule
+
+
+def create_appointment(db: Session, appointment: schemas.AppointmentCreate):
+    db_appointment = models.Appointments(
+        name=appointment.name,
+        start=appointment.start,
+        end=appointment.end,
+        phone=appointment.phone,
+        address=appointment.address,
+    )
+    db.add(db_appointment)
+    db.commit()
+    db.refresh(db_appointment)
+    return db_appointment

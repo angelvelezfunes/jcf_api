@@ -86,3 +86,14 @@ class TimeOff(Base):
     name = Column(String(250), index=True)
     start = Column(DateTime, index=True, default=datetime.utcnow)
     end = Column(DateTime, index=True, default=datetime.utcnow)
+
+
+class Appointments(Base):
+    __tablename__ = "appointments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(250), index=True)
+    address = Column(String(250), index=True)
+    phone = Column(String(250), index=True)
+    start = Column(DateTime, index=True, default=datetime.utcnow)
+    end = Column(DateTime, index=True, default=datetime.utcnow)

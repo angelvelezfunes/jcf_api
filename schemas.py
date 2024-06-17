@@ -205,3 +205,26 @@ class TimeOffReadFormatted(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+# Appointment
+class AppointmentCreate(BaseModel):
+    name: str
+    start: datetime
+    end: datetime
+    phone: str
+    address: str
+
+    class Config:
+        orm_mode = True
+
+
+class AppointmentRead(BaseModel):
+    name: str
+    start: datetime
+    end: datetime
+    phone: str
+    address: str
+
+    class Config:
+        orm_mode = True

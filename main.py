@@ -301,3 +301,10 @@ def time_off_by_date(date_start: str, date_end: str, db: Session = Depends(get_d
     schedule = crud.get_time_off_by_date(db, date_start, date_end)
 
     return schedule
+
+
+# Appointments
+@app.post("/appointments", response_model=schemas.AppointmentCreate)
+def create_appointment(appointment: schemas.AppointmentCreate, db: Session = Depends(get_db)):
+    db_appointment = crud.create_appointment(db=db, appointment=appointment)
+    return db_appointment
