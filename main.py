@@ -308,3 +308,18 @@ def time_off_by_date(date_start: str, date_end: str, db: Session = Depends(get_d
 def create_appointment(appointment: schemas.AppointmentCreate, db: Session = Depends(get_db)):
     db_appointment = crud.create_appointment(db=db, appointment=appointment)
     return db_appointment
+
+
+@app.get("/appointments", response_model=list[schemas.AppointmentRead])
+def read_appointments(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    appointments = crud.get_appointments(db, skip=skip, limit=limit)
+    return appointments
+
+
+@app.delete("/appointments/{appointment_id}", response_model=schemas.AppointmentRead)
+def delete_appointment_endpoint(appointment_id: int, db: Session = Depends(get_db)):
+    appointment = crud.get_appointment_by_id(db, appointment_id)
+    if appointment is None:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    crud.delete_appointment(db, appointment_id)
+    return appointment

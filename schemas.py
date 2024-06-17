@@ -220,6 +220,7 @@ class AppointmentCreate(BaseModel):
 
 
 class AppointmentRead(BaseModel):
+    id: int
     name: str
     start: datetime
     end: datetime

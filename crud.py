@@ -240,6 +240,10 @@ def get_time_off_by_id(db: Session, id: int):
     return db.query(models.TimeOff).filter(models.TimeOff.id == id).first()
 
 
+def get_appointment_by_id(db: Session, id: int):
+    return db.query(models.Appointments).filter(models.Appointments.id == id).first()
+
+
 def get_time_off(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.TimeOff).offset(skip).limit(limit).all()
 
@@ -267,3 +271,14 @@ def create_appointment(db: Session, appointment: schemas.AppointmentCreate):
     db.commit()
     db.refresh(db_appointment)
     return db_appointment
+
+
+def get_appointments(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Appointments).offset(skip).limit(limit).all()
+
+
+def delete_appointment(db: Session, appointment_id: int):
+    appointment = db.query(models.Appointments).filter(models.Appointments.id == appointment_id).first()
+    if appointment:
+        db.delete(appointment)
+        db.commit()
