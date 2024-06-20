@@ -4,14 +4,13 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from dotenv import load_dotenv
 import os
 import models
-from models import User, Item
+from models import User
 import crud
 import schemas
 from database import SessionLocal, engine, Base
