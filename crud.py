@@ -31,22 +31,22 @@ def get_schedule_by_id(db: Session, id: int):
     return db.query(models.Schedule).filter(models.Schedule.id == id).first()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100, is_active: Optional[bool] = None):
+def get_users(db: Session, is_active: Optional[bool] = None):
     query = db.query(models.User)
     if is_active is not None:
         query = query.filter(models.User.is_active == is_active)
-    return query.offset(skip).limit(limit).all()
+    return query.all()
 
 
-def get_crew_leaders(db: Session, skip: int = 0, limit: int = 10, is_active: Optional[bool] = None):
+def get_crew_leaders(db: Session, is_active: Optional[bool] = None):
     query = db.query(models.CrewLeaders)
     if is_active is not None:
         query = query.filter(models.CrewLeaders.is_active == is_active)
-    return query.offset(skip).limit(limit).all()
+    return query.all()
 
 
-def get_schedule(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Schedule).offset(skip).limit(limit).all()
+def get_schedule(db: Session):
+    return db.query(models.Schedule).all()
 
 
 def create_user(db: Session, user: schemas.UserCreate):
@@ -107,8 +107,8 @@ def create_client(db: Session, client: schemas.ClientCreate):
     return db_client
 
 
-def get_clients(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(models.Client).offset(skip).limit(limit).all()
+def get_clients(db: Session):
+    return db.query(models.Client).filter(models.Client.is_active == True).all()
 
 
 def get_client_by_email(db: Session, email: str):
@@ -154,10 +154,10 @@ def create_crew_leader(db: Session, crew_leader: schemas.CrewLeaderCreate):
     return db_crew_leader
 
 
-def get_crews(db: Session, skip: int = 0, limit: int = 10):
+def get_crews(db: Session):
     return db.query(models.Crews).options(
         joinedload(models.Crews.owner)
-    ).offset(skip).limit(limit).all()
+    ).all()
 
 
 def update_crew_leader(db: Session, crew_leader_id: int, crew_leader_update: schemas.CrewLeaderUpdate):
@@ -243,8 +243,8 @@ def get_appointment_by_id(db: Session, id: int):
     return db.query(models.Appointments).filter(models.Appointments.id == id).first()
 
 
-def get_time_off(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.TimeOff).offset(skip).limit(limit).all()
+def get_time_off(db: Session):
+    return db.query(models.TimeOff).all()
 
 
 def get_time_off_by_date(db: Session, date_start: str, date_end: str):
@@ -272,8 +272,8 @@ def create_appointment(db: Session, appointment: schemas.AppointmentCreate):
     return db_appointment
 
 
-def get_appointments(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Appointments).offset(skip).limit(limit).all()
+def get_appointments(db: Session):
+    return db.query(models.Appointments).all()
 
 
 def delete_appointment(db: Session, appointment_id: int):

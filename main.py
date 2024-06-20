@@ -155,8 +155,8 @@ def update_user(id: int, user: schemas.UserUpdate, db: Session = Depends(get_db)
 
 
 @app.get("/users/", response_model=list[schemas.User])
-def read_users(skip: int = 0, limit: int = 100, is_active: Optional[bool] = None, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit, is_active=is_active)
+def read_users(is_active: Optional[bool] = None, db: Session = Depends(get_db)):
+    users = crud.get_users(db, is_active=is_active)
     return users
 
 
@@ -185,8 +185,8 @@ def create_client(client: schemas.ClientCreate, db: Session = Depends(get_db)):
 
 
 @app.get("/clients", response_model=list[schemas.ClientRead])
-def read_clients(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    clients = crud.get_clients(db, skip=skip, limit=limit)
+def read_clients(db: Session = Depends(get_db)):
+    clients = crud.get_clients(db)
     return clients
 
 # ITEMS
@@ -204,8 +204,8 @@ def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_
 
 
 @app.get("/schedule", response_model=list[schemas.ScheduleRead])
-def read_schedules(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    schedule = crud.get_schedule(db, skip=skip, limit=limit)
+def read_schedules(db: Session = Depends(get_db)):
+    schedule = crud.get_schedule(db)
     return schedule
 
 
@@ -229,8 +229,8 @@ def create_crew_leader(crew_leader: schemas.CrewLeaderCreate, db: Session = Depe
 
 
 @app.get("/crewLeaders", response_model=list[schemas.CrewLeaderRead])
-def read_crew_leaders(skip: int = 0, limit: int = 10, is_active: Optional[bool] = None, db: Session = Depends(get_db)):
-    crew_leaders = crud.get_crew_leaders(db, skip=skip, limit=limit, is_active=is_active)
+def read_crew_leaders(is_active: Optional[bool] = None, db: Session = Depends(get_db)):
+    crew_leaders = crud.get_crew_leaders(db, is_active=is_active)
     return crew_leaders
 
 
@@ -257,8 +257,8 @@ def create_schedule(crews: schemas.CrewCreate, db: Session = Depends(get_db)):
 
 
 @app.get("/crews", response_model=list[schemas.CrewRead])
-def read_crew_leaders(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    crews = crud.get_crews(db, skip=skip, limit=limit)
+def read_crew_leaders(db: Session = Depends(get_db)):
+    crews = crud.get_crews(db)
     return crews
 
 
@@ -286,8 +286,8 @@ def create_time_off_endpoint(time_off: schemas.TimeOffCreate, db: Session = Depe
 
 
 @app.get("/time-off", response_model=list[schemas.TimeOffRead])
-def read_time_off(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    time_off = crud.get_time_off(db, skip=skip, limit=limit)
+def read_time_off(db: Session = Depends(get_db)):
+    time_off = crud.get_time_off(db)
     return time_off
 
 
@@ -315,8 +315,8 @@ def create_appointment(appointment: schemas.AppointmentCreate, db: Session = Dep
 
 
 @app.get("/appointments", response_model=list[schemas.AppointmentRead])
-def read_appointments(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    appointments = crud.get_appointments(db, skip=skip, limit=limit)
+def read_appointments(db: Session = Depends(get_db)):
+    appointments = crud.get_appointments(db)
     return appointments
 
 
