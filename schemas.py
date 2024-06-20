@@ -60,20 +60,6 @@ class User(UserBase):
         from_attributes = True
 
 
-# CLIENTS #
-class ClientCreate(UserBase):
-    first_name: str
-    last_name: str
-    phone: str
-    address: str
-    name: str
-    special_instructions: str
-    zip: str
-    city: str
-    state: str
-    is_active: bool
-
-
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -92,12 +78,34 @@ class TokenData(BaseModel):
         from_attributes = True
 
 
-class Client(UserBase):
+# CLIENTS #
+class ClientCreate(BaseModel):
+    first_name: str
+    last_name: str
+    phone: str
+    address: str
+    name: str
+    special_instructions: str
+    zip: str
+    city: str
+    state: str
+    is_active: bool
+
+
+class ClientRead(BaseModel):
     id: int
+    first_name: str
+    last_name: Optional[str]
+    phone: Optional[str]
+    address: Optional[str]
+    special_instructions: Optional[str]
+    zip: Optional[str]
+    city: Optional[str]
+    state: Optional[str]
     is_active: bool
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 # Schedule

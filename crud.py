@@ -31,10 +31,6 @@ def get_schedule_by_id(db: Session, id: int):
     return db.query(models.Schedule).filter(models.Schedule.id == id).first()
 
 
-def get_clients(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Client).offset(skip).limit(limit).all()
-
-
 def get_users(db: Session, skip: int = 0, limit: int = 100, is_active: Optional[bool] = None):
     query = db.query(models.User)
     if is_active is not None:
@@ -94,7 +90,6 @@ def update_user(db: Session, db_user: models.User, user: schemas.UserUpdate):
 
 
 # CLIENTS #
-
 def create_client(db: Session, client: schemas.ClientCreate):
     db_client = models.Client(email=client.email,
                               first_name=client.first_name,
@@ -110,6 +105,10 @@ def create_client(db: Session, client: schemas.ClientCreate):
     db.commit()
     db.refresh(db_client)
     return db_client
+
+
+def get_clients(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.Client).offset(skip).limit(limit).all()
 
 
 def get_client_by_email(db: Session, email: str):

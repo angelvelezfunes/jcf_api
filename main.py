@@ -176,14 +176,18 @@ def create_item_for_user(
 
 
 # CLIENT
-
-@app.post("/clients/", response_model=schemas.Client)
+@app.post("/clients", response_model=schemas.ClientCreate)
 def create_client(client: schemas.ClientCreate, db: Session = Depends(get_db)):
     db_client = crud.get_client_by_email(db, email=client.email)
     if db_client:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_client(db=db, client=client)
 
+
+@app.get("/clients", response_model=list[schemas.ClientRead])
+def read_clients(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    clients = crud.get_clients(db, skip=skip, limit=limit)
+    return clients
 
 # ITEMS
 @app.get("/items/", response_model=list[schemas.Item])
