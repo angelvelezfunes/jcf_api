@@ -15,10 +15,12 @@ import crud
 import schemas
 from database import SessionLocal, engine, Base
 import middleware
+from mangum import Mangum
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+handler = Mangum(app)
 
 origins = [
     "http://localhost:3000",
