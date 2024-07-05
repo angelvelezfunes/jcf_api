@@ -132,6 +132,7 @@ def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
 def create_schedule(db: Session, schedule: schemas.ScheduleCreate):
     db_schedule = models.Schedule(
         title=schedule.title,
+        address=schedule.address,
         start=schedule.start,
         end=schedule.end,
         crew_leader_id=schedule.crew_leader_id,

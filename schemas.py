@@ -111,6 +111,7 @@ class ClientRead(BaseModel):
 # Schedule
 class ScheduleCreate(BaseModel):
     title: str
+    address: str
     start: datetime
     end: datetime
     crew_leader_id: int
@@ -119,6 +120,7 @@ class ScheduleCreate(BaseModel):
 class ScheduleRead(BaseModel):
     id: int
     title: str
+    address: str
     start: datetime
     end: datetime
     crew_leader_id: int
@@ -171,6 +173,7 @@ class CrewLeaderSchedule(BaseModel):
     first_name: str
     last_name: str
     title: str
+    address: str
     start: datetime
     end: datetime
 

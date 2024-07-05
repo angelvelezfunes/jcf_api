@@ -61,6 +61,7 @@ class Schedule(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(250), index=True)
+    address = Column(String(250), index=True)
     start = Column(DateTime, index=True, default=datetime.utcnow)
     end = Column(DateTime, index=True, default=datetime.utcnow)
     crew_leader_id = Column(Integer, ForeignKey('crew_leaders.id'))  # Foreign key referencing CrewLeader
