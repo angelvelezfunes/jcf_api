@@ -120,7 +120,7 @@ class ScheduleCreate(BaseModel):
 class ScheduleRead(BaseModel):
     id: int
     title: str
-    address: str
+    address: Optional[str] = None
     start: datetime
     end: datetime
     crew_leader_id: int
