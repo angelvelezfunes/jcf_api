@@ -7,11 +7,21 @@ from datetime import datetime
 # ITEMS #
 class ItemBase(BaseModel):
     title: str
-    description: Union[str, None] = None
+    description: Optional[str] = None
+    purchased_date: datetime
 
 
 class ItemCreate(ItemBase):
-    pass
+    title: str
+    description: Optional[str] = None
+    purchased_date: datetime
+
+
+class ItemRead(BaseModel):
+    id: int
+    title: str
+    description: Optional[str] = None
+    purchased_date: datetime
 
 
 class Item(ItemBase):

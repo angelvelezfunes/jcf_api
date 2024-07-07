@@ -40,6 +40,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(50), index=True)
     description = Column(String(255), index=True)
+    purchased_date = Column(DateTime, index=True, default=datetime.utcnow)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="items")

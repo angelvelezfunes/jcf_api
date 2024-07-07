@@ -27,7 +27,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         try:
             auth_header = request.headers.get("Authorization")
-            print('Authorization:', auth_header)
+            # print('Authorization:', auth_header)
             if not auth_header:
                 raise HTTPException(status_code=401, detail="Missing Authorization header")
 

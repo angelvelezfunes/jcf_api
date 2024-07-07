@@ -191,6 +191,7 @@ def read_clients(db: Session = Depends(get_db)):
     clients = crud.get_clients(db)
     return clients
 
+
 # ITEMS
 @app.get("/items/", response_model=list[schemas.Item])
 def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -329,3 +330,10 @@ def delete_appointment_endpoint(appointment_id: int, db: Session = Depends(get_d
         raise HTTPException(status_code=404, detail="Appointment not found")
     crud.delete_appointment(db, appointment_id)
     return appointment
+
+
+# Items
+@app.get("/inventory", response_model=list[schemas.ItemRead])
+def read_inventory(db: Session = Depends(get_db)):
+    inventory = crud.get_inventory(db)
+    return inventory

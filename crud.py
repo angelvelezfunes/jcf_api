@@ -117,8 +117,8 @@ def get_client_by_email(db: Session, email: str):
 
 # ITEMS #
 
-def get_items(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Item).offset(skip).limit(limit).all()
+def get_inventory(db: Session, skip: int = 0):
+    return db.query(models.Item).offset(skip).all()
 
 
 def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
@@ -204,6 +204,7 @@ def get_crews_by_crew_leader(db: Session, crew_leader_id: int):
 
 
 def get_schedule_by_date(db: Session, date: str):
+    # noinspection SqlResolve
     sql_query = """
            SELECT *
            FROM inventory.schedule s
@@ -249,6 +250,7 @@ def get_time_off(db: Session):
 
 
 def get_time_off_by_date(db: Session, date_start: str, date_end: str):
+    # noinspection SqlResolve
     sql_query = """
             SELECT id, name, DATE_FORMAT(start, '%m/%d/%Y %k:%i:%s') AS start, 
                        DATE_FORMAT(end, '%m/%d/%Y %k:%i:%s') AS end
