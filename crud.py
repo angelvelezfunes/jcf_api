@@ -284,3 +284,14 @@ def delete_appointment(db: Session, appointment_id: int):
     if appointment:
         db.delete(appointment)
         db.commit()
+
+
+def update_client(db: Session, client_id: int, db_client_update: schemas.ClientUpdate):
+    db_client = db.query(models.Client).filter(models.Client.id == client_id).first()
+    if not db_client:
+        return None
+    for key, value in db_client_update.dict(exclude_unset=True).items():
+        setattr(db_client, key, value)
+    db.commit()
+    db.refresh(db_client)
+    return db_client

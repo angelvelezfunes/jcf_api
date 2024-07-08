@@ -118,6 +118,19 @@ class ClientRead(BaseModel):
         orm_mode = True
 
 
+class ClientUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    name: Optional[str] = None
+    special_instructions: Optional[str] = None
+    zip: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
 # Schedule
 class ScheduleCreate(BaseModel):
     title: str

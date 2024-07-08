@@ -186,6 +186,14 @@ def create_client(client: schemas.ClientCreate, db: Session = Depends(get_db)):
     return crud.create_client(db=db, client=client)
 
 
+@app.put("/clients/{client_id}", response_model=schemas.ClientRead)
+def update_client(client_id: int, db_client_update: schemas.ClientUpdate, db: Session = Depends(get_db)):
+    db_client_update = crud.update_client(db=db, client_id=client_id, db_client_update=db_client_update)
+    if not db_client_update:
+        raise HTTPException(status_code=404, detail="Client not found")
+    return db_client_update
+
+
 @app.get("/clients", response_model=list[schemas.ClientRead])
 def read_clients(db: Session = Depends(get_db)):
     clients = crud.get_clients(db)
