@@ -131,27 +131,6 @@ class ClientUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
-# Schedule
-class ScheduleCreate(BaseModel):
-    title: str
-    address: str
-    start: datetime
-    end: datetime
-    crew_leader_id: int
-
-
-class ScheduleRead(BaseModel):
-    id: int
-    title: str
-    address: Optional[str] = None
-    start: datetime
-    end: datetime
-    crew_leader_id: int
-
-    class Config:
-        orm_mode = True
-
-
 class CrewLeaderCreate(BaseModel):
     first_name: str
     last_name: str
@@ -163,6 +142,35 @@ class CrewLeaderRead(BaseModel):
     first_name: str
     last_name: str
     is_active: bool
+
+    class Config:
+        orm_mode = True
+
+
+# Schedule
+class ScheduleCreate(BaseModel):
+    title: str
+    address: str
+    start: datetime
+    end: datetime
+    crew_leader_id: int
+
+
+class ScheduleUpdate(BaseModel):
+    title: str
+    address: str
+    start: str
+    end: str
+    crew_leader_id: int
+
+
+class ScheduleRead(BaseModel):
+    id: int
+    title: str
+    address: Optional[str] = None
+    start: datetime
+    end: datetime
+    crew_leader_id: Optional[int] = None
 
     class Config:
         orm_mode = True

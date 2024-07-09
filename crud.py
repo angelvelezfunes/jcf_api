@@ -225,7 +225,7 @@ def get_schedule_by_date(db: Session, date: str):
            FROM inventory.schedule s
            JOIN inventory.crew_leaders c ON s.crew_leader_id = c.id
            WHERE DATE(s.start) = :date
-           ORDER BY c.id
+           ORDER BY c.id, s.start asc
        """
     schedule = db.execute(text(sql_query), {"date": date}).fetchall()
     return schedule

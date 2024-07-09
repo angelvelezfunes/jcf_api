@@ -300,6 +300,17 @@ def get_schedule_by_date(date: str, db: Session = Depends(get_db)):
     return schedule
 
 
+@app.put("/schedule/{schedule_id}", response_model=schemas.ScheduleRead)
+def update_schedule(schedule_id: int, schedule_update: schemas.ScheduleUpdate, db: Session = Depends(get_db)):
+    db_schedule = db.query(models.Schedule).filter(models.Schedule.id == schedule_id).first()
+    if not db_schedule:
+        raise HTTPException(status_code=404, detail="Schedule not found")
+    for key, value in schedule_update.dict(exclude_unset=True).items():
+        setattr(db_schedule, key, value)
+    db.commit()
+    db.refresh(db_schedule)
+    return db_schedule
+
 # Time Off
 @app.post("/time-off", response_model=schemas.TimeOffRead)
 def create_time_off_endpoint(time_off: schemas.TimeOffCreate, db: Session = Depends(get_db)):
