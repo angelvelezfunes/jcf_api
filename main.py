@@ -267,6 +267,17 @@ def create_schedule(crews: schemas.CrewCreate, db: Session = Depends(get_db)):
     return db_schedule
 
 
+@app.put("/crews/{crew_id}", response_model=schemas.CrewRead)
+def update_crew(crew_id: int, crew_update: schemas.CrewUpdate,
+                db: Session = Depends(get_db)):
+    db_crew = crud.get_crew(db, crew_id)
+    if db_crew is None:
+        raise HTTPException(status_code=404, detail="Crew not found")
+
+    db_crew = crud.update_crew(db=db, crew_id=crew_id, crew_update=crew_update)
+    return db_crew
+
+
 @app.get("/crews", response_model=list[schemas.CrewRead])
 def read_crew_leaders(db: Session = Depends(get_db)):
     crews = crud.get_crews(db)

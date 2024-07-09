@@ -1,6 +1,6 @@
 # crud.py
 from typing import Optional
-
+from sqlalchemy import asc
 from sqlalchemy.orm import Session, joinedload
 import models
 import schemas
@@ -42,6 +42,7 @@ def get_crew_leaders(db: Session, is_active: Optional[bool] = None):
     query = db.query(models.CrewLeaders)
     if is_active is not None:
         query = query.filter(models.CrewLeaders.is_active == is_active)
+        query = query.order_by(models.CrewLeaders.first_name.asc())
     return query.all()
 
 
@@ -156,9 +157,23 @@ def create_crew_leader(db: Session, crew_leader: schemas.CrewLeaderCreate):
 
 
 def get_crews(db: Session):
-    return db.query(models.Crews).options(
+    return db.query(models.Crews).join(models.CrewLeaders).order_by(asc(models.CrewLeaders.first_name)).options(
         joinedload(models.Crews.owner)
     ).all()
+
+
+def get_crew(db: Session, crew_id: int):
+    return db.query(models.Crews).filter(models.Crews.id == crew_id).first()
+
+
+def update_crew(db: Session, crew_id: int, crew_update: schemas.CrewUpdate):
+    db_crew = db.query(models.Crews).filter(models.Crews.id == crew_id).first()
+    if db_crew:
+        for key, value in crew_update.dict(exclude_unset=True).items():
+            setattr(db_crew, key, value)
+        db.commit()
+        db.refresh(db_crew)
+    return db_crew
 
 
 def update_crew_leader(db: Session, crew_leader_id: int, crew_leader_update: schemas.CrewLeaderUpdate):

@@ -214,6 +214,13 @@ class CrewCreate(BaseModel):
     owner_id: int
 
 
+class CrewUpdate(BaseModel):
+    first_name: Optional[str]
+    last_name: Optional[str]
+    start_date: Optional[str]
+    is_active: Optional[bool]
+    owner_id: Optional[int]
+
 # Time Off
 class TimeOffCreate(BaseModel):
     name: str
