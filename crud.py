@@ -6,6 +6,7 @@ import models
 import schemas
 from passlib.context import CryptContext
 from sqlalchemy.sql import text
+from sqlalchemy import or_
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -92,7 +93,7 @@ def update_user(db: Session, db_user: models.User, user: schemas.UserUpdate):
 
 # CLIENTS #
 def create_client(db: Session, client: schemas.ClientCreate):
-    db_client = models.Client(email=client.email,
+    db_client = models.Client(
                               first_name=client.first_name,
                               last_name=client.last_name,
                               phone=client.phone,
@@ -110,10 +111,6 @@ def create_client(db: Session, client: schemas.ClientCreate):
 
 def get_clients(db: Session):
     return db.query(models.Client).filter(models.Client.is_active == True).all()
-
-
-def get_client_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.Client.email == email).first()
 
 
 # ITEMS #
@@ -310,3 +307,16 @@ def update_client(db: Session, client_id: int, db_client_update: schemas.ClientU
     db.commit()
     db.refresh(db_client)
     return db_client
+
+
+def get_clients_top_10(db: Session, query: str = "", skip: int = 0, limit: int = 10):
+    if query:
+        return db.query(models.Client).filter(
+            or_(
+                models.Client.first_name.ilike(f"%{query}%"),
+                models.Client.last_name.ilike(f"%{query}%"),
+                models.Client.address.ilike(f"%{query}%")
+            )
+        ).offset(skip).limit(limit).all()
+    else:
+        return db.query(models.Client).offset(skip).limit(limit).all()

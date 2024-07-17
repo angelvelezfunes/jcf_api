@@ -94,12 +94,12 @@ class ClientCreate(BaseModel):
     last_name: str
     phone: str
     address: str
-    name: str
-    special_instructions: str
-    zip: str
+    special_instructions: Optional[str] = None
+    zip: Optional[str] = None
     city: str
-    state: str
-    is_active: bool
+    state: Optional[str] = None
+    email: Optional[str] = None
+    is_active: Optional[bool] = True
 
 
 class ClientRead(BaseModel):
@@ -123,7 +123,6 @@ class ClientUpdate(BaseModel):
     last_name: Optional[str] = None
     phone: Optional[str] = None
     address: Optional[str] = None
-    name: Optional[str] = None
     special_instructions: Optional[str] = None
     zip: Optional[str] = None
     city: Optional[str] = None

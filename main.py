@@ -178,12 +178,12 @@ def create_item_for_user(
 
 
 # CLIENT
-@app.post("/clients", response_model=schemas.ClientCreate)
+@app.post("/clients", response_model=list[schemas.ClientCreate])
 def create_client(client: schemas.ClientCreate, db: Session = Depends(get_db)):
-    db_client = crud.get_client_by_email(db, email=client.email)
-    if db_client:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_client(db=db, client=client)
+    crud.create_client(db=db, client=client)
+    clients = crud.get_clients(db)
+    return clients
+
 
 
 @app.put("/clients/{client_id}", response_model=schemas.ClientRead)
@@ -200,10 +200,16 @@ def read_clients(db: Session = Depends(get_db)):
     return clients
 
 
+@app.get("/clients-top-10", response_model=list[schemas.ClientRead])
+async def get_clients_top_10(query: str = "", skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    items = crud.get_clients_top_10(db, query=query, skip=skip, limit=limit)
+    return items
+
+
 # ITEMS
 @app.get("/items/", response_model=list[schemas.Item])
 def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    items = crud.get_items(db, skip=skip, limit=limit)
+    items = 0  # = crud.get_items(db, skip=skip, limit=limit)
     return items
 
 
@@ -310,6 +316,7 @@ def update_schedule(schedule_id: int, schedule_update: schemas.ScheduleUpdate, d
     db.commit()
     db.refresh(db_schedule)
     return db_schedule
+
 
 # Time Off
 @app.post("/time-off", response_model=schemas.TimeOffRead)
