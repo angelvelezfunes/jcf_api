@@ -185,7 +185,6 @@ def create_client(client: schemas.ClientCreate, db: Session = Depends(get_db)):
     return clients
 
 
-
 @app.put("/clients/{client_id}", response_model=schemas.ClientRead)
 def update_client(client_id: int, db_client_update: schemas.ClientUpdate, db: Session = Depends(get_db)):
     db_client_update = crud.update_client(db=db, client_id=client_id, db_client_update=db_client_update)
@@ -214,7 +213,7 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 
 
 # Schedule
-@app.post("/schedule", response_model=schemas.ScheduleCreate)
+@app.post("/schedule",  response_model=schemas.Schedule)
 def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
     db_schedule = crud.create_schedule(db=db, schedule=schedule)
     return db_schedule
