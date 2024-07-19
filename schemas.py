@@ -166,7 +166,7 @@ class ScheduleCreate(BaseModel):
 
 
 class ScheduleUpdate(BaseModel):
-    id: int
+    id: Optional[int] = None
     title: str
     address: str
     start: str
