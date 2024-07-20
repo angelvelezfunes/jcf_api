@@ -315,8 +315,7 @@ def get_clients_top_20(db: Session, query: str = "", skip: int = 0, limit: int =
             or_(
                 models.Client.first_name.ilike(f"%{query}%"),
                 models.Client.last_name.ilike(f"%{query}%"),
-                models.Client.address.ilike(f"%{query}%")
-            )
+               )
         ).offset(skip).limit(limit).all()
     else:
         return db.query(models.Client).offset(skip).limit(limit).all()
