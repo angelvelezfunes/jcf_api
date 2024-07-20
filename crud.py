@@ -110,7 +110,7 @@ def create_client(db: Session, client: schemas.ClientCreate):
 
 
 def get_clients(db: Session):
-    return db.query(models.Client).filter(models.Client.is_active == True).all()
+    return db.query(models.Client).filter(models.Client.is_active == True).order_by(models.Client.first_name, models.Client.last_name).all()
 
 
 # ITEMS #
@@ -309,7 +309,7 @@ def update_client(db: Session, client_id: int, db_client_update: schemas.ClientU
     return db_client
 
 
-def get_clients_top_10(db: Session, query: str = "", skip: int = 0, limit: int = 10):
+def get_clients_top_20(db: Session, query: str = "", skip: int = 0, limit: int = 20):
     if query:
         return db.query(models.Client).filter(
             or_(
