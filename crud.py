@@ -7,6 +7,7 @@ import schemas
 from passlib.context import CryptContext
 from sqlalchemy.sql import text
 from sqlalchemy import or_
+from datetime import datetime
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -319,3 +320,24 @@ def get_clients_top_20(db: Session, query: str = "", skip: int = 0, limit: int =
         ).offset(skip).limit(limit).all()
     else:
         return db.query(models.Client).offset(skip).limit(limit).all()
+
+
+def update_appointment(db: Session, appointment_id: int, db_appointment_update: schemas.AppointmentUpdate):
+    db_appointment = db.query(models.Appointments).filter(models.Appointments.id == appointment_id).first()
+    if not db_appointment:
+        return None
+
+    update_data = db_appointment_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        if key in ["start", "end"] and isinstance(value, datetime):
+            value = value.strftime('%Y-%m-%d %H:%M:%S')
+        setattr(db_appointment, key, value)
+
+    db.commit()
+    db.refresh(db_appointment)
+
+    # Convert datetime fields to string for the response
+    db_appointment.start = db_appointment.start.strftime('%Y-%m-%d %H:%M:%S') if db_appointment.start else None
+    db_appointment.end = db_appointment.end.strftime('%Y-%m-%d %H:%M:%S') if db_appointment.end else None
+
+    return db_appointment

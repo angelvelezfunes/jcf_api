@@ -359,6 +359,15 @@ def read_appointments(db: Session = Depends(get_db)):
     return appointments
 
 
+@app.put("/appointments/{appointment_id}", response_model=schemas.AppointmentUpdate)
+def update_appointments(appointment_id: int, db_appointment_update: schemas.AppointmentUpdate, db: Session = Depends(get_db)):
+    db_appointment_update = crud.update_appointment(db=db, appointment_id=appointment_id,
+                                                    db_appointment_update=db_appointment_update)
+    if not db_appointment_update:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    return db_appointment_update
+
+
 @app.delete("/appointments/{appointment_id}", response_model=schemas.AppointmentRead)
 def delete_appointment_endpoint(appointment_id: int, db: Session = Depends(get_db)):
     appointment = crud.get_appointment_by_id(db, appointment_id)

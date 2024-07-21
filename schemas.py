@@ -278,6 +278,14 @@ class AppointmentCreate(BaseModel):
         orm_mode = True
 
 
+class AppointmentUpdate(BaseModel):
+    name: Optional[str]
+    start: Optional[str]
+    end: Optional[str]
+    address: Optional[str]
+    phone: Optional[str]
+
+
 class AppointmentRead(BaseModel):
     id: int
     name: str
