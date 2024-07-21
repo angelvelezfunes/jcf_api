@@ -213,7 +213,7 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 
 
 # Schedule
-@app.post("/schedule",  response_model=schemas.Schedule)
+@app.post("/schedule", response_model=schemas.Schedule)
 def create_schedule(schedule: schemas.ScheduleCreate, db: Session = Depends(get_db)):
     db_schedule = crud.create_schedule(db=db, schedule=schedule)
     return db_schedule
@@ -360,7 +360,8 @@ def read_appointments(db: Session = Depends(get_db)):
 
 
 @app.put("/appointments/{appointment_id}", response_model=schemas.AppointmentUpdate)
-def update_appointments(appointment_id: int, db_appointment_update: schemas.AppointmentUpdate, db: Session = Depends(get_db)):
+def update_appointments(appointment_id: int, db_appointment_update: schemas.AppointmentUpdate,
+                        db: Session = Depends(get_db)):
     db_appointment_update = crud.update_appointment(db=db, appointment_id=appointment_id,
                                                     db_appointment_update=db_appointment_update)
     if not db_appointment_update:
@@ -382,3 +383,10 @@ def delete_appointment_endpoint(appointment_id: int, db: Session = Depends(get_d
 def read_inventory(db: Session = Depends(get_db)):
     inventory = crud.get_inventory(db)
     return inventory
+
+
+@app.post("/send-email-reminder")
+def send_email_reminder(db: Session = Depends(get_db)):
+    crud.send_estimate_reminder(db)
+
+    return {"msg": "send reminder"}

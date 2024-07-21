@@ -22,7 +22,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         # Skip authentication for /token endpoint
-        if request.url.path in ["/token", "/docs", "/", "/openapi.json"]:
+        if request.url.path in ["/token", "/docs", "/", "/openapi.json", "/send-email-reminder"]:
             return await call_next(request)
 
         try:

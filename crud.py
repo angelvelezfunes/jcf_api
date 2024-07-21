@@ -7,9 +7,18 @@ import schemas
 from passlib.context import CryptContext
 from sqlalchemy.sql import text
 from sqlalchemy import or_
-from datetime import datetime
+from datetime import datetime, date, timedelta
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import logging
+from dotenv import load_dotenv
+import os
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 def get_password_hash(password):
@@ -95,15 +104,15 @@ def update_user(db: Session, db_user: models.User, user: schemas.UserUpdate):
 # CLIENTS #
 def create_client(db: Session, client: schemas.ClientCreate):
     db_client = models.Client(
-                              first_name=client.first_name,
-                              last_name=client.last_name,
-                              phone=client.phone,
-                              address=client.address,
-                              city=client.city,
-                              state=client.state,
-                              zip=client.zip,
-                              special_instructions=client.special_instructions,
-                              )
+        first_name=client.first_name,
+        last_name=client.last_name,
+        phone=client.phone,
+        address=client.address,
+        city=client.city,
+        state=client.state,
+        zip=client.zip,
+        special_instructions=client.special_instructions,
+    )
     db.add(db_client)
     db.commit()
     db.refresh(db_client)
@@ -111,7 +120,8 @@ def create_client(db: Session, client: schemas.ClientCreate):
 
 
 def get_clients(db: Session):
-    return db.query(models.Client).filter(models.Client.is_active == True).order_by(models.Client.first_name, models.Client.last_name).all()
+    return db.query(models.Client).filter(models.Client.is_active == True).order_by(models.Client.first_name,
+                                                                                    models.Client.last_name).all()
 
 
 # ITEMS #
@@ -316,7 +326,7 @@ def get_clients_top_20(db: Session, query: str = "", skip: int = 0, limit: int =
             or_(
                 models.Client.first_name.ilike(f"%{query}%"),
                 models.Client.last_name.ilike(f"%{query}%"),
-               )
+            )
         ).offset(skip).limit(limit).all()
     else:
         return db.query(models.Client).offset(skip).limit(limit).all()
@@ -341,3 +351,66 @@ def update_appointment(db: Session, appointment_id: int, db_appointment_update: 
     db_appointment.end = db_appointment.end.strftime('%Y-%m-%d %H:%M:%S') if db_appointment.end else None
 
     return db_appointment
+
+
+def send_estimate_reminder(db: Session):
+    today = date.today()
+    tomorrow = today + timedelta(days=1)
+    today_appointments = db.query(models.Appointments).filter(
+        models.Appointments.start >= datetime.combine(today, datetime.min.time()),
+        models.Appointments.start < datetime.combine(tomorrow, datetime.min.time())
+    ).all()
+
+    if not today_appointments:
+        logging.info("No appointments for today")
+        return {"msg": "No appointments for today"}
+    username = os.getenv("MAIL_ADDRESS")
+    password = os.getenv("MAIL_PASS")
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+
+    # Email details
+    sender = "avelez702l@gmail.com"
+    recipient = "angelvelez81@yahoo.com"
+    subject = "You have an estimate!"
+
+    # Create the email
+    message = MIMEMultipart()
+    message['From'] = sender
+    message['To'] = recipient
+    message['Subject'] = subject
+
+    appointments_html = ""
+    for appointment in today_appointments:
+        start_time = appointment.start.strftime('%m-%d-%Y %I:%M %p')
+        appointments_html += f"""
+           <p>
+               <strong>Name:</strong> {appointment.name}<br>
+               <strong>Start:</strong> {start_time}<br>
+               <strong>Address:</strong> {appointment.address}<br>
+               <strong>Phone:</strong> {appointment.phone}
+           </p>
+           <hr>
+           """
+
+    html_content = f"""
+       <html>
+         <body>
+           <p>Today's Estimate:</p>
+           {appointments_html}
+         </body>
+       </html>
+       """
+
+    # Attach the HTML content
+    message.attach(MIMEText(html_content, 'html'))
+
+    try:
+        # Connect to the Gmail SMTP server
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()  # Upgrade the connection to a secure encrypted SSL/TLS connection
+            server.login(username, password)  # Log in to your Gmail account
+            server.send_message(message)  # Send the email
+            logging.info("Email sent successfully")
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
