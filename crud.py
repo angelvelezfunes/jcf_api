@@ -371,7 +371,7 @@ def send_estimate_reminder(db: Session):
 
     # Email details
     sender = "avelez702l@gmail.com"
-    recipient = "angelvelez81@yahoo.com"
+    recipient = "jcfmaintenance1@gmail.com"
     subject = "You have an estimate!"
 
     # Create the email
