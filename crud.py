@@ -370,7 +370,7 @@ def send_estimate_reminder(db: Session):
     smtp_port = 587
 
     # Email details
-    sender = "avelez702l@gmail.com"
+    sender = "jcfmaintenancenoreply@gmail.com"
     recipient = "jcfmaintenance1@gmail.com"
     subject = "You have an estimate!"
 
