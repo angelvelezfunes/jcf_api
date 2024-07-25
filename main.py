@@ -225,6 +225,14 @@ def read_schedules(db: Session = Depends(get_db)):
     return schedule
 
 
+@app.get("/schedule-get-history", response_model=list[schemas.ScheduleSearch])
+def read_schedules_history(title: str, db: Session = Depends(get_db)):
+    schedule = crud.get_schedule_history(db, title=title)
+    if not schedule:
+        raise HTTPException(status_code=404, detail="Schedule history not found")
+    return schedule
+
+
 @app.delete("/schedule/{schedule_id}", response_model=schemas.ScheduleRead)
 def delete_schedule(schedule_id: int, db: Session = Depends(get_db)):
     """

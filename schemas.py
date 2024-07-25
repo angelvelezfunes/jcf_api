@@ -186,6 +186,19 @@ class ScheduleRead(BaseModel):
         orm_mode = True
 
 
+class ScheduleSearch(BaseModel):
+    id: int
+    title: str
+    address: Optional[str] = None
+    start: str
+    end: str
+    crew_leader_id: Optional[int] = None
+    crew_leader_name: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+
 class CrewLeaderUpdate(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]

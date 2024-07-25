@@ -61,6 +61,25 @@ def get_schedule(db: Session):
     return db.query(models.Schedule).all()
 
 
+def get_schedule_history(db: Session, title: str) -> list[dict]:
+    schedules = db.query(models.Schedule).filter(models.Schedule.title == title).all()
+    schedule_list = []
+
+    for schedule in schedules:
+        schedule_data = {
+            'id': schedule.id,
+            'title': schedule.title,
+            'address': schedule.address,
+            'start': schedule.start.strftime('%m-%d-%Y %H:%M:%S'),
+            'end': schedule.end.strftime('%m-%d-%Y %H:%M:%S'),
+            'crew_leader_name': f"{schedule.crew_leader.first_name} {schedule.crew_leader.last_name}" if schedule.crew_leader else None
+        }
+        schedule_list.append(schedule_data)
+
+    return schedule_list
+
+
+
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = get_password_hash(user.password)
     db_user = models.User(username=user.username,
