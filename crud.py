@@ -62,7 +62,9 @@ def get_schedule(db: Session):
 
 
 def get_schedule_history(db: Session, title: str) -> list[dict]:
-    schedules = db.query(models.Schedule).filter(models.Schedule.title == title).all()
+    schedules = db.query(models.Schedule).filter(
+        models.Schedule.title.like(f'%{title}%')
+    ).all()
     schedule_list = []
 
     for schedule in schedules:
