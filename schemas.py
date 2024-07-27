@@ -134,6 +134,7 @@ class CrewLeaderCreate(BaseModel):
     first_name: str
     last_name: str
     is_active: bool
+    list_order: int
 
 
 class CrewLeaderRead(BaseModel):
@@ -141,6 +142,7 @@ class CrewLeaderRead(BaseModel):
     first_name: str
     last_name: str
     is_active: bool
+    list_order: int
 
     class Config:
         orm_mode = True
@@ -203,6 +205,7 @@ class CrewLeaderUpdate(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     is_active: Optional[bool]
+    list_order: Optional[bool]
 
 
 class CrewLeaderWithSchedules(CrewLeaderRead):

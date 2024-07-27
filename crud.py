@@ -53,7 +53,7 @@ def get_crew_leaders(db: Session, is_active: Optional[bool] = None):
     query = db.query(models.CrewLeaders)
     if is_active is not None:
         query = query.filter(models.CrewLeaders.is_active == is_active)
-        query = query.order_by(models.CrewLeaders.first_name.asc())
+        query = query.order_by(models.CrewLeaders.list_order.asc())
     return query.all()
 
 

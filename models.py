@@ -53,6 +53,7 @@ class CrewLeaders(Base):
     first_name = Column(String(255), index=True)
     last_name = Column(String(255), index=True)
     is_active = Column(Boolean, default=True)
+    list_order = Column(Integer, index=True)
     owned_crews = relationship("Crews", back_populates="owner")
     schedules = relationship("Schedule", back_populates="crew_leader")
 
