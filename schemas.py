@@ -205,7 +205,7 @@ class CrewLeaderUpdate(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     is_active: Optional[bool]
-    list_order: Optional[bool]
+    list_order: Optional[int]
 
 
 class CrewLeaderWithSchedules(CrewLeaderRead):
