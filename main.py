@@ -205,6 +205,15 @@ async def get_clients_top_20(query: str = "", skip: int = 0, limit: int = 10, db
     return items
 
 
+@app.delete("/clients/{client_id}", response_model=schemas.ClientRead)
+def delete_client(client_id: int, db: Session = Depends(get_db)):
+    client = crud.get_client_by_id(db, client_id)
+    if client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+    crud.delete_client(db, client_id)
+    return client
+
+
 # ITEMS
 @app.get("/items/", response_model=list[schemas.Item])
 def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):

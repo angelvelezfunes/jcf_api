@@ -288,6 +288,10 @@ def get_time_off_by_id(db: Session, id: int):
     return db.query(models.TimeOff).filter(models.TimeOff.id == id).first()
 
 
+def get_client_by_id(db: Session, id: int):
+    return db.query(models.Client).filter(models.Client.id == id).first()
+
+
 def get_appointment_by_id(db: Session, id: int):
     return db.query(models.Appointments).filter(models.Appointments.id == id).first()
 
@@ -330,6 +334,13 @@ def delete_appointment(db: Session, appointment_id: int):
     appointment = db.query(models.Appointments).filter(models.Appointments.id == appointment_id).first()
     if appointment:
         db.delete(appointment)
+        db.commit()
+
+
+def delete_client(db: Session, client_id: int):
+    client = db.query(models.Client).filter(models.Client.id == client_id).first()
+    if client:
+        db.delete(client)
         db.commit()
 
 
