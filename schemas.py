@@ -199,6 +199,7 @@ class ScheduleSearch(BaseModel):
     end: str
     crew_leader_id: Optional[int] = None
     crew_leader_name: Optional[str] = None
+    day_of_week: Optional[str] = None
 
     class Config:
         orm_mode = True
