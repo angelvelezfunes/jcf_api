@@ -84,7 +84,6 @@ def get_schedule_history(db: Session, title: str) -> list[dict]:
     return schedule_list
 
 
-
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = get_password_hash(user.password)
     db_user = models.User(username=user.username,
@@ -169,6 +168,7 @@ def create_schedule(db: Session, schedule: schemas.ScheduleCreate):
         start=schedule.start,
         end=schedule.end,
         crew_leader_id=schedule.crew_leader_id,
+        client_id=schedule.client_id
     )
     db.add(db_schedule)
     db.commit()

@@ -165,6 +165,7 @@ class ScheduleCreate(BaseModel):
     start: datetime
     end: datetime
     crew_leader_id: int
+    client_id: int
 
 
 class ScheduleUpdate(BaseModel):
@@ -174,6 +175,7 @@ class ScheduleUpdate(BaseModel):
     start: str
     end: str
     crew_leader_id: int
+    client_id: int
 
 
 class ScheduleRead(BaseModel):
@@ -183,6 +185,7 @@ class ScheduleRead(BaseModel):
     start: datetime
     end: datetime
     crew_leader_id: Optional[int] = None
+    client_id: Optional[int] = None
 
     class Config:
         orm_mode = True

@@ -32,6 +32,7 @@ class Client(Base):
     email = Column(String(255), unique=True, index=True)
     special_instructions = Column(String(255), index=True)
     is_active = Column(Boolean, default=True)
+    schedules = relationship("Schedule", back_populates="client_rel")
 
 
 class Item(Base):
@@ -68,6 +69,8 @@ class Schedule(Base):
     end = Column(DateTime, index=True, default=datetime.utcnow)
     crew_leader_id = Column(Integer, ForeignKey('crew_leaders.id'))  # Foreign key referencing CrewLeader
     crew_leader = relationship("CrewLeaders", back_populates="schedules")
+    client_id = Column(Integer, ForeignKey('clients.id'))  # Foreign key referencing Client
+    client_rel = relationship("Client", back_populates="schedules")
 
 
 class Crews(Base):
