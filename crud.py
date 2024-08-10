@@ -75,8 +75,8 @@ def get_schedule_history(db: Session, title: str) -> list[dict]:
             'id': schedule.id,
             'title': schedule.title,
             'address': schedule.address,
-            'start': schedule.start.strftime('%m-%d-%Y %H:%M:%S'),
-            'end': schedule.end.strftime('%m-%d-%Y %H:%M:%S'),
+            'start': schedule.start.strftime('%m-%d-%Y %I:%M:%S %p'),  # 12-hour format with AM/PM
+            'end': schedule.end.strftime('%m-%d-%Y %I:%M:%S %p'),
             'day_of_week': schedule.start.strftime('%A'),
             'crew_leader_name': f"{schedule.crew_leader.first_name} {schedule.crew_leader.last_name}" if schedule.crew_leader else None
         }
