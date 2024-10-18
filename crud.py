@@ -356,7 +356,7 @@ def update_client(db: Session, client_id: int, db_client_update: schemas.ClientU
     return db_client
 
 
-def get_clients_top_20(db: Session, query: str = "", skip: int = 0, limit: int = 20):
+def get_clients_top_30(db: Session, query: str = "", skip: int = 0, limit: int = 30):
     if query:
         return db.query(models.Client).filter(
             or_(
