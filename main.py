@@ -200,7 +200,7 @@ def read_clients(db: Session = Depends(get_db)):
 
 
 @app.get("/clients-top-30", response_model=list[schemas.ClientRead])
-async def get_clients_top_20(query: str = "", skip: int = 0, limit: int = 30, db: Session = Depends(get_db)):
+async def get_clients_top_30(query: str = "", skip: int = 0, limit: int = 30, db: Session = Depends(get_db)):
     items = crud.get_clients_top_30(db, query=query, skip=skip, limit=limit)
     return items
 
