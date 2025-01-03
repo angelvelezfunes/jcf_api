@@ -181,7 +181,8 @@ def create_crew_leader(db: Session, crew_leader: schemas.CrewLeaderCreate):
     db_crew_leader = models.CrewLeaders(
         first_name=crew_leader.first_name,
         last_name=crew_leader.last_name,
-        is_active=crew_leader.is_active
+        is_active=crew_leader.is_active,
+        list_order=crew_leader.list_order,
     )
     db.add(db_crew_leader)
     db.commit()
