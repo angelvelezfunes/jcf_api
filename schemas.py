@@ -167,7 +167,7 @@ class ScheduleCreate(BaseModel):
     end: datetime
     crew_leader_id: int
     client_id: int
-    invoiced: bool
+    invoiced: Optional[bool] = False
 
 
 class ScheduleUpdate(BaseModel):
@@ -178,7 +178,7 @@ class ScheduleUpdate(BaseModel):
     end: str
     crew_leader_id: int
     client_id: int
-    invoiced: bool
+    invoiced: Optional[bool] = False
 
 
 class ScheduleRead(BaseModel):
