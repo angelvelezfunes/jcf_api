@@ -78,7 +78,8 @@ def get_schedule_history(db: Session, title: str) -> list[dict]:
             'start': schedule.start.strftime('%m-%d-%Y %I:%M:%S %p'),  # 12-hour format with AM/PM
             'end': schedule.end.strftime('%m-%d-%Y %I:%M:%S %p'),
             'day_of_week': schedule.start.strftime('%A'),
-            'crew_leader_name': f"{schedule.crew_leader.first_name} {schedule.crew_leader.last_name}" if schedule.crew_leader else None
+            'crew_leader_name': f"{schedule.crew_leader.first_name} {schedule.crew_leader.last_name}" if schedule.crew_leader else None,
+            'invoiced': schedule.invoiced,
         }
         schedule_list.append(schedule_data)
 
@@ -259,7 +260,7 @@ def get_schedule_by_date(db: Session, date: str):
            FROM inventory.schedule s
            JOIN inventory.crew_leaders c ON s.crew_leader_id = c.id
            WHERE DATE(s.start) = :date
-           ORDER BY c.id, s.start asc
+           ORDER BY c.list_order, s.start asc
        """
     schedule = db.execute(text(sql_query), {"date": date}).fetchall()
     return schedule

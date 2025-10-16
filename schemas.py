@@ -157,6 +157,7 @@ class Schedule(BaseModel):
     start: datetime
     end: datetime
     crew_leader_id: int
+    invoiced: bool
 
 
 class ScheduleCreate(BaseModel):
@@ -166,6 +167,7 @@ class ScheduleCreate(BaseModel):
     end: datetime
     crew_leader_id: int
     client_id: int
+    invoiced: bool
 
 
 class ScheduleUpdate(BaseModel):
@@ -176,6 +178,7 @@ class ScheduleUpdate(BaseModel):
     end: str
     crew_leader_id: int
     client_id: int
+    invoiced: bool
 
 
 class ScheduleRead(BaseModel):
@@ -186,6 +189,7 @@ class ScheduleRead(BaseModel):
     end: datetime
     crew_leader_id: Optional[int] = None
     client_id: Optional[int] = None
+    invoiced: Optional[bool] = None
 
     class Config:
         orm_mode = True
@@ -200,6 +204,7 @@ class ScheduleSearch(BaseModel):
     crew_leader_id: Optional[int] = None
     crew_leader_name: Optional[str] = None
     day_of_week: Optional[str] = None
+    invoiced: Optional[bool] = None
 
     class Config:
         orm_mode = True
@@ -258,6 +263,7 @@ class CrewUpdate(BaseModel):
     start_date: Optional[str]
     is_active: Optional[bool]
     owner_id: Optional[int]
+
 
 # Time Off
 class TimeOffCreate(BaseModel):

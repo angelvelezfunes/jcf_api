@@ -67,6 +67,7 @@ class Schedule(Base):
     address = Column(String(250), index=True)
     start = Column(DateTime, index=True, default=datetime.utcnow)
     end = Column(DateTime, index=True, default=datetime.utcnow)
+    invoiced = Column(Boolean, default=False)
     crew_leader_id = Column(Integer, ForeignKey('crew_leaders.id'))  # Foreign key referencing CrewLeader
     crew_leader = relationship("CrewLeaders", back_populates="schedules")
     client_id = Column(Integer, ForeignKey('clients.id'))  # Foreign key referencing Client

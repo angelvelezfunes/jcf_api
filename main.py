@@ -55,7 +55,7 @@ app.add_middleware(middleware.AuthMiddleware, db=SessionLocal(), secret_key=SECR
 
 @app.get("/")
 async def root():
-    return {"message": "Hi, Users"}
+    return {"message": "Hi, peeps!"}
 
 
 # Dependency
