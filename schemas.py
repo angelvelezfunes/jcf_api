@@ -90,10 +90,10 @@ class TokenData(BaseModel):
 
 # CLIENTS #
 class ClientCreate(BaseModel):
-    first_name: str
-    last_name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     phone: Optional[str] = None
-    address: str
+    address: Optional[str] = None
     special_instructions: Optional[str] = None
     zip: Optional[str] = None
     city: Optional[str] = None
@@ -120,8 +120,8 @@ class ClientRead(BaseModel):
 
 
 class ClientUpdate(BaseModel):
-    first_name: str
-    last_name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     phone: Optional[str] = None
     address: Optional[str] = None
     special_instructions: Optional[str] = None
@@ -174,8 +174,8 @@ class ScheduleCreate(BaseModel):
 
 class ScheduleUpdate(BaseModel):
     id: Optional[int] = None
-    title: str
-    address: str
+    title: Optional[str] = None
+    address: Optional[str] = None
     start: str
     end: str
     crew_leader_id: int
