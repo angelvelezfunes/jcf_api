@@ -495,34 +495,49 @@ def send_invoice(client_email, month, year, bill_to, address, items, amount_due,
     # message['CC'] = cc
     message['Subject'] = subject
 
-    items_html = "".join([
-        f"<tr><td>{item.get('description', '')}</td>"
-        f"<td>{item.get('quantity', '')}</td>"
-        f"<td>${item.get('rate', 0):,.2f}</td>"
-        f"<td>${item.get('total', 0):,.2f}</td></tr>"
-        for item in items
-    ])
+    items_html = ""
+    for item in items:
+        items_html += f"""
+            <tr>
+                <td style="text-align:center;">{item['date']}</td>
+                <td style="text-align:center;">${item['perCleaning']:.2f}</td>
+                <td style="text-align:center;">${item['tax']:.2f}</td>
+                <td style="text-align:center;">${item['total']:.2f}</td>
+            </tr>
+            """
 
     html_content = f"""
         <html>
-        <body style="font-family: Arial, sans-serif;">
-            <h2>Cleaning Invoice — {month} {year}</h2>
-            <p><strong>Bill To:</strong> {bill_to}<br/>
-            <strong>Address:</strong> {address}</p>
+        <body style="font-family: Arial, sans-serif; color:#333;">
+            <div style="max-width:700px; margin:auto; border:1px solid #ccc; padding:20px;">
+                <h2 style="text-align:center; color:#616161;">JCF Maintenance</h2>
+                <p style="text-align:center;">40 Bennett Pl, Amityville, NY 11701<br/>631-598-3408</p>
+                <hr/>
 
-            <table border="1" cellspacing="0" cellpadding="6" style="border-collapse: collapse;">
-                <thead>
-                    <tr style="background-color:#f0f0f0;">
-                        <th>Description</th><th>Quantity</th><th>Rate</th><th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {items_html}
-                </tbody>
-            </table>
+                <h3 style="text-align:center;">Cleaning Invoice for {month} {year}</h3>
 
-            <h3>Total Amount Due: ${amount_due:,.2f}</h3>
-            <p>Thank you for your business!</p>
+                <p><strong>Bill To:</strong> {bill_to}<br/>
+                <strong>Address:</strong> {address}</p>
+
+                <table border="1" cellspacing="0" cellpadding="6" style="width:100%; border-collapse:collapse;">
+                    <thead style="background-color:#bcaaa4;">
+                        <tr>
+                            <th>Date(s)</th>
+                            <th>Amount Per Cleaning</th>
+                            <th>Tax</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items_html}
+                    </tbody>
+                </table>
+
+                <h3 style="text-align:right; color:#607d8b;">Amount Due: ${amount_due:.2f}</h3>
+
+                <hr/>
+                <p style="text-align:center; font-style:italic; color:#999;">Thank you for your business!</p>
+            </div>
         </body>
         </html>
         """
