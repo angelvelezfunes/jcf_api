@@ -65,22 +65,43 @@ def get_schedule_history(db: Session, title: str) -> list[dict]:
     title = title.strip().lower()
     if "null" in title:
         title = title.replace("null", "").strip()
-    schedules = db.query(models.Schedule).filter(
-        models.Schedule.title.like(f'%{title}%')
-    ).order_by(models.Schedule.start.desc()).all()
-    schedule_list = []
 
+    schedules = (
+        db.query(models.Schedule)
+        .join(models.Client, models.Schedule.client_id == models.Client.id, isouter=True)
+        .join(models.CrewLeaders, models.Schedule.crew_leader_id == models.CrewLeaders.id, isouter=True)
+        .filter(models.Schedule.title.ilike(f"%{title}%"))
+        .order_by(models.Schedule.start.desc())
+        .all()
+    )
+
+    schedule_list = []
     for schedule in schedules:
         schedule_data = {
-            'id': schedule.id,
-            'title': schedule.title,
-            'address': schedule.address,
-            'start': schedule.start.strftime('%m-%d-%Y %I:%M:%S %p'),  # 12-hour format with AM/PM
-            'end': schedule.end.strftime('%m-%d-%Y %I:%M:%S %p'),
-            'day_of_week': schedule.start.strftime('%A'),
-            'crew_leader_name': f"{schedule.crew_leader.first_name} {schedule.crew_leader.last_name}" if schedule.crew_leader else None,
-            'invoiced': schedule.invoiced,
+            "id": schedule.id,
+            "title": schedule.title,
+            "address": schedule.address,
+            "start": schedule.start.strftime("%m-%d-%Y %I:%M:%S %p"),
+            "end": schedule.end.strftime("%m-%d-%Y %I:%M:%S %p"),
+            "day_of_week": schedule.start.strftime("%A"),
+            "crew_leader_name": (
+                f"{schedule.crew_leader.first_name} {schedule.crew_leader.last_name}"
+                if schedule.crew_leader else None
+            ),
+            # client info
+            "email": schedule.client_rel.email if schedule.client_rel else None,
+            "client_name": (
+                f"{schedule.client_rel.first_name} {schedule.client_rel.last_name}"
+                if schedule.client_rel else None
+            ),
+            "client_address": schedule.client_rel.address if schedule.client_rel else None,
+            "client_city": schedule.client_rel.city if schedule.client_rel else None,
+            "client_state": schedule.client_rel.state if schedule.client_rel else None,
+            "client_zip": schedule.client_rel.zip if schedule.client_rel else None,
+            "client_phone": schedule.client_rel.phone if schedule.client_rel else None,
+            "invoiced": schedule.invoiced,
         }
+
         schedule_list.append(schedule_data)
 
     return schedule_list
@@ -136,6 +157,7 @@ def create_client(db: Session, client: schemas.ClientCreate):
         city=client.city,
         state=client.state,
         zip=client.zip,
+        email=client.email,
         special_instructions=client.special_instructions,
     )
     db.add(db_client)
@@ -452,3 +474,68 @@ def send_estimate_reminder(db: Session):
             logging.info("Email sent successfully")
     except Exception as e:
         logging.error(f"Failed to send email: {e}")
+
+
+def send_invoice(client_email, month, year, bill_to, address, items, amount_due, db):
+    username = os.getenv("MAIL_ADDRESS")
+    password = os.getenv("MAIL_PASS")
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+
+    # Email details
+    sender = "jcfmaintenancenoreply@gmail.com"
+    cc = "jcfmaintenance1@gmail.com"
+    recipient = client_email
+    subject = "JCF Billing Amount"
+
+    # Create the email
+    message = MIMEMultipart()
+    message['From'] = sender
+    message['To'] = recipient
+    # message['CC'] = cc
+    message['Subject'] = subject
+
+    items_html = "".join([
+        f"<tr><td>{item.get('description', '')}</td>"
+        f"<td>{item.get('quantity', '')}</td>"
+        f"<td>${item.get('rate', 0):,.2f}</td>"
+        f"<td>${item.get('total', 0):,.2f}</td></tr>"
+        for item in items
+    ])
+
+    html_content = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif;">
+            <h2>Cleaning Invoice — {month} {year}</h2>
+            <p><strong>Bill To:</strong> {bill_to}<br/>
+            <strong>Address:</strong> {address}</p>
+
+            <table border="1" cellspacing="0" cellpadding="6" style="border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color:#f0f0f0;">
+                        <th>Description</th><th>Quantity</th><th>Rate</th><th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {items_html}
+                </tbody>
+            </table>
+
+            <h3>Total Amount Due: ${amount_due:,.2f}</h3>
+            <p>Thank you for your business!</p>
+        </body>
+        </html>
+        """
+
+    message.attach(MIMEText(html_content, "html"))
+
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(username, password)
+            server.send_message(message)
+            logging.info("Email sent successfully")
+            return {"status": "Email sent successfully"}
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
+        return {"error": f"Failed to send email: {e}"}

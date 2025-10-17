@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
@@ -393,6 +393,22 @@ def delete_appointment_endpoint(appointment_id: int, db: Session = Depends(get_d
         raise HTTPException(status_code=404, detail="Appointment not found")
     crud.delete_appointment(db, appointment_id)
     return appointment
+
+
+# Invoiced
+@app.post("/invoiced-email")
+async def invoiced_email(request: Request, db: Session = Depends(get_db)):
+    data = await request.json()
+
+    month = data.get("month", "")
+    client_email = data.get("client_email", "")
+    year = data.get("year", "")
+    bill_to = data.get("billTo", "")
+    address = data.get("address", "")
+    items = data.get("items", [])
+    amount_due = data.get("amountDue", 0)
+    email_invoice = crud.send_invoice(client_email, month, year, bill_to, address, items, amount_due, db)
+    return email_invoice
 
 
 # Items

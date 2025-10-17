@@ -71,7 +71,7 @@ class Schedule(Base):
     crew_leader_id = Column(Integer, ForeignKey('crew_leaders.id'))  # Foreign key referencing CrewLeader
     crew_leader = relationship("CrewLeaders", back_populates="schedules")
     client_id = Column(Integer, ForeignKey('clients.id'))  # Foreign key referencing Client
-    client_rel = relationship("Client", back_populates="schedules")
+    client_rel = relationship("Client", back_populates="schedules", lazy="joined")
 
 
 class Crews(Base):

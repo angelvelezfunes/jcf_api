@@ -90,10 +90,10 @@ class TokenData(BaseModel):
 
 # CLIENTS #
 class ClientCreate(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    first_name: str
+    last_name: str
     phone: Optional[str] = None
-    address: Optional[str] = None
+    address: str
     special_instructions: Optional[str] = None
     zip: Optional[str] = None
     city: Optional[str] = None
@@ -113,14 +113,15 @@ class ClientRead(BaseModel):
     city: Optional[str]
     state: Optional[str]
     is_active: bool
+    email: Optional[str]
 
     class Config:
         orm_mode = True
 
 
 class ClientUpdate(BaseModel):
-    first_name: Optional[str] = None
-    last_name: Optional[str]
+    first_name: str
+    last_name: str
     phone: Optional[str] = None
     address: Optional[str] = None
     special_instructions: Optional[str] = None
@@ -128,6 +129,7 @@ class ClientUpdate(BaseModel):
     city: Optional[str] = None
     state: Optional[str] = None
     is_active: Optional[bool] = None
+    email: Optional[str]
 
 
 class CrewLeaderCreate(BaseModel):
@@ -205,6 +207,14 @@ class ScheduleSearch(BaseModel):
     crew_leader_name: Optional[str] = None
     day_of_week: Optional[str] = None
     invoiced: Optional[bool] = None
+    # Client info
+    client_name: Optional[str] = None
+    email: Optional[str] = None
+    client_address: Optional[str] = None
+    client_city: Optional[str] = None
+    client_state: Optional[str] = None
+    client_zip: Optional[str] = None
+    client_phone: Optional[str] = None
 
     class Config:
         orm_mode = True
