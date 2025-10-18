@@ -401,7 +401,7 @@ async def invoiced_email(request: Request, db: Session = Depends(get_db)):
     data = await request.json()
 
     month = data.get("month", "")
-    client_email = data.get("client_email", "")
+    client_email = data.get("email", "")
     year = data.get("year", "")
     bill_to = data.get("billTo", "")
     address = data.get("address", "")

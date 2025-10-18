@@ -476,35 +476,32 @@ def send_estimate_reminder(db: Session):
         logging.error(f"Failed to send email: {e}")
 
 
-def send_invoice(client_email, month, year, bill_to, address, items, amount_due, db):
+def send_invoice(client_email, month, year, bill_to, address, items, amount_due, db=None):
     username = os.getenv("MAIL_ADDRESS")
     password = os.getenv("MAIL_PASS")
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
 
+    if not client_email:
+        logging.error("No client email provided")
+        return {"error": "Client email is required"}
+
     # Email details
-    sender = "jcfmaintenancenoreply@gmail.com"
-    cc = "jcfmaintenance1@gmail.com"
+    sender = username or "jcfmaintenancenoreply@gmail.com"
     recipient = client_email
     subject = "JCF Billing Amount"
 
-    # Create the email
-    message = MIMEMultipart()
-    message['From'] = sender
-    message['To'] = recipient
-    # message['CC'] = cc
-    message['Subject'] = subject
-
+    # Build HTML items table
     items_html = ""
     for item in items:
         items_html += f"""
             <tr>
-                <td style="text-align:center;">{item['date']}</td>
-                <td style="text-align:center;">${item['perCleaning']:.2f}</td>
-                <td style="text-align:center;">${item['tax']:.2f}</td>
-                <td style="text-align:center;">${item['total']:.2f}</td>
+                <td style="text-align:center;">{item.get('date', '')}</td>
+                <td style="text-align:center;">${item.get('perCleaning', 0):.2f}</td>
+                <td style="text-align:center;">${item.get('tax', 0):.2f}</td>
+                <td style="text-align:center;">${item.get('total', 0):.2f}</td>
             </tr>
-            """
+        """
 
     html_content = f"""
         <html>
@@ -513,12 +510,9 @@ def send_invoice(client_email, month, year, bill_to, address, items, amount_due,
                 <h2 style="text-align:center; color:#616161;">JCF Maintenance</h2>
                 <p style="text-align:center;">40 Bennett Pl, Amityville, NY 11701<br/>631-598-3408</p>
                 <hr/>
-
                 <h3 style="text-align:center;">Cleaning Invoice for {month} {year}</h3>
-
                 <p><strong>Bill To:</strong> {bill_to}<br/>
                 <strong>Address:</strong> {address}</p>
-
                 <table border="1" cellspacing="0" cellpadding="6" style="width:100%; border-collapse:collapse;">
                     <thead style="background-color:#bcaaa4;">
                         <tr>
@@ -532,25 +526,30 @@ def send_invoice(client_email, month, year, bill_to, address, items, amount_due,
                         {items_html}
                     </tbody>
                 </table>
-
                 <h3 style="text-align:right; color:#607d8b;">Amount Due: ${amount_due:.2f}</h3>
-
                 <hr/>
                 <p style="text-align:center; font-style:italic; color:#999;">Thank you for your business!</p>
             </div>
         </body>
         </html>
-        """
+    """
 
+    message = MIMEMultipart()
+    message["From"] = sender
+    message["To"] = recipient
+    message["Subject"] = subject
     message.attach(MIMEText(html_content, "html"))
 
     try:
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls()
             server.login(username, password)
-            server.send_message(message)
-            logging.info("Email sent successfully")
-            return {"status": "Email sent successfully"}
+            server.sendmail(sender, recipient, message.as_string())
+        logging.info(f"Email successfully sent to {recipient}")
+        return {"status": "Email sent successfully"}
+    except smtplib.SMTPAuthenticationError:
+        logging.error("SMTP Authentication failed: check your username/password or app password.")
+        return {"error": "SMTP Authentication failed"}
     except Exception as e:
-        logging.error(f"Failed to send email: {e}")
-        return {"error": f"Failed to send email: {e}"}
+        logging.error(f"Failed to send email: {str(e)}")
+        return {"error": f"Failed to send email: {str(e)}"}
