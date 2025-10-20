@@ -400,6 +400,7 @@ def delete_appointment_endpoint(appointment_id: int, db: Session = Depends(get_d
 async def invoiced_email(request: Request, db: Session = Depends(get_db)):
     data = await request.json()
 
+    schedule_id = data.get(id, "")
     month = data.get("month", "")
     client_email = data.get("email", "")
     year = data.get("year", "")
@@ -407,7 +408,7 @@ async def invoiced_email(request: Request, db: Session = Depends(get_db)):
     address = data.get("address", "")
     items = data.get("items", [])
     amount_due = data.get("amountDue", 0)
-    email_invoice = crud.send_invoice(client_email, month, year, bill_to, address, items, amount_due, db)
+    email_invoice = crud.send_invoice(schedule_id, client_email, month, year, bill_to, address, items, amount_due, db)
     return email_invoice
 
 

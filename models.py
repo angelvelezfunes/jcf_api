@@ -32,6 +32,7 @@ class Client(Base):
     email = Column(String(255), unique=True, index=True)
     special_instructions = Column(String(255), index=True)
     is_active = Column(Boolean, default=True)
+    invoiced_monthly = Column(Boolean, default=False)
     schedules = relationship("Schedule", back_populates="client_rel")
 
 

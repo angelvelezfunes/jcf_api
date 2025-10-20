@@ -100,6 +100,7 @@ class ClientCreate(BaseModel):
     state: Optional[str] = None
     email: Optional[str] = None
     is_active: Optional[bool] = True
+    invoiced_monthly: Optional[bool] = False
 
 
 class ClientRead(BaseModel):
@@ -114,6 +115,7 @@ class ClientRead(BaseModel):
     state: Optional[str]
     is_active: bool
     email: Optional[str]
+    invoiced_monthly: Optional[bool]
 
     class Config:
         orm_mode = True
@@ -130,6 +132,7 @@ class ClientUpdate(BaseModel):
     state: Optional[str] = None
     is_active: Optional[bool] = None
     email: Optional[str]
+    invoiced_monthly: Optional[bool] = 0
 
 
 class CrewLeaderCreate(BaseModel):

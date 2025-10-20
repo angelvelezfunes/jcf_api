@@ -476,7 +476,7 @@ def send_estimate_reminder(db: Session):
         logging.error(f"Failed to send email: {e}")
 
 
-def send_invoice(client_email, month, year, bill_to, address, items, amount_due, db=None):
+def send_invoice(schedule_id, client_email, month, year, bill_to, address, items, amount_due, db=None):
     username = os.getenv("MAIL_ADDRESS")
     password = os.getenv("MAIL_PASS")
     smtp_server = "smtp.gmail.com"
