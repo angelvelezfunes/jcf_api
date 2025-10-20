@@ -26,7 +26,8 @@ origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://jcfmaintenance.com",
-    "https://jcfmaintenance.com/"
+    "https://jcfmaintenance.com/",
+    "https://master.d2cdupkd18nrpi.amplifyapp.com"
 ]
 
 app.add_middleware(
