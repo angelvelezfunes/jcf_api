@@ -1,6 +1,6 @@
 # crud.py
 from typing import Optional
-from sqlalchemy import asc
+from sqlalchemy import asc, and_
 from sqlalchemy.orm import Session, joinedload
 import models
 import schemas
@@ -58,7 +58,16 @@ def get_crew_leaders(db: Session, is_active: Optional[bool] = None):
 
 
 def get_schedule(db: Session):
-    return db.query(models.Schedule).all()
+    today = datetime.utcnow()
+    start_date = today - timedelta(days=60)  # last 2 months
+    end_date = today + timedelta(weeks=2)  # 2 weeks ahead. In case scheduler goes on vacation and needs a set-up early
+
+    return db.query(models.Schedule).filter(
+        and_(
+            models.Schedule.start >= start_date,
+            models.Schedule.start <= end_date
+        )
+    ).all()
 
 
 def get_schedule_history(db: Session, title: str) -> list[dict]:
